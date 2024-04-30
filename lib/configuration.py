@@ -57,7 +57,6 @@ class Conf:
               "\n    [-d|--debug]: Debug level [D,I,W,E]. Default Warning."  # noqa E501
               "\n    [-h|--help]: Show help."
               "\n    [-l|--limit] N: Limit to last N days. Default is 7 days."
-              "\n    [-q|--quiet]: Quiet. Don't show progress bar."
               "\n  Arguments:"
               "\n    [INPUTDIR]: Default is current path."
               "\n    [OUTPUTDIR]: Default is current path plus '/sarcharts/'.")  # noqa E501
@@ -69,9 +68,9 @@ class Conf:
 
     def get_opts():
         try:
-            options, remainder = getopt.getopt(sys.argv[1:], 'hd:l:q',
+            options, remainder = getopt.getopt(sys.argv[1:], 'hd:l:',
                                                ['help',
-                                                'debug=', 'limit=', 'quiet'])
+                                                'debug=', 'limit='])
             for opt, arg in options:
                 if opt == '-h' or opt == '--help':
                     Conf.show_help()
@@ -79,8 +78,6 @@ class Conf:
                     Conf.debug = arg
                 elif opt == '-l' or opt == '--limit':
                     Conf.limit = arg
-                elif opt == '-q' or opt == '--quiet':
-                    Conf.quiet = True
             if len(remainder) > 0:
                 if remainder[0].endswith("/"):
                     remainder[0] = remainder[0][:-1]
