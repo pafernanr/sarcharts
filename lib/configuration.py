@@ -32,14 +32,16 @@ class Conf:
                                   'kbswpcad', '%swpcad']},
               "memorypaging": {"arg": "-B", "datasets": [], "labels": [],
                                "hidden": ['fault/s', 'majflt/s', 'pgfree/s',
-                                          'pgscank/s', 'pgscand/s', 'pgsteal/s', 
-                                          '%vmeff']},
+                                          'pgscank/s', 'pgscand/s',
+                                          'pgsteal/s', '%vmeff']},
               "load": {"arg": "-q", "datasets": [], "labels": [],
                        "hidden": ['runq-sz', 'plist-sz', 'blocked']},
               "network": {"arg": "-n DEV", "datasets": [], "labels": [],
-                          "hidden": []},
+                          "hidden": ['IFACE', 'rxpck/s', 'txpck/s', 'rxcmp/s',
+                                     'txcmp/s', 'rxmcst/s', '%ifutil']},
               "io": {"arg": "-b", "datasets": [], "labels": [],
-                     "hidden": []}
+                     "hidden": ['tps', 'dtps', 'bread/s',
+                                'bwrtn/s', 'bdscd/s']}
               }
     colors = ['255, 99, 132',
               '255, 159, 64',
