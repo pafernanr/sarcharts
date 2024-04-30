@@ -3,6 +3,8 @@ Author: Pablo Fernández Rodríguez
 Web: https://github.com/pafernanr/dynflowparser
 Licence: GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
+from pathlib import Path
+import os
 import subprocess
 import sys
 
@@ -30,3 +32,12 @@ class Util:
             print(cmd + "\n" + stderr)
             sys.exit(1)
         return stdout
+
+    def get_sarfiles(Conf):
+        sarfiles = []
+        filelist = sorted(Path(Conf.inputdir).iterdir(), key=os.path.getmtime)
+        for i in range(len(filelist)):
+            f = filelist[i]
+            if f.match('sa[0-9][0-9]'):
+                sarfiles.append(str(f))
+        return sarfiles

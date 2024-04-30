@@ -5,20 +5,17 @@ Web: https://github.com/pafernanr/sarcharts
 Licence: GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
 import os
+import webbrowser
 from jinja2 import Environment, FileSystemLoader
 from lib.configuration import Conf
 from lib.util import Util
-import webbrowser
 
 
 if __name__ == "__main__":
     Conf.get_opts()
-    # convert and merge sar files to csv
+    sarfiles = Util.get_sarfiles(Conf)
     showheader = ""
-    sarfiles = Util.exec_command(Conf, f"ls -1tr {Conf.inputdir}"
-                                 + "| grep -E 'sa[0-9][0-9].*'"
-                                 + f"| tail -n {Conf.limit}")
-    for f in sarfiles.split():
+    for f in sarfiles[-Conf.limit:]:
         inputfile = Conf.inputdir + "/" + f
         for k, v in Conf.charts.items():
             csvfile = Conf.outputdir + "sar/" + k + ".csv"
@@ -26,7 +23,7 @@ if __name__ == "__main__":
                               + f" {showheader} >> {csvfile}")
         showheader = "| grep -vE '^#'"
 
-    # read csv data into chartjs compatible Lists 
+    # read csv data into chartjs compatible Lists
     for k, v in Conf.charts.items():
         csvfile = Conf.outputdir + "sar/" + k + ".csv"
         with open(csvfile) as f:
