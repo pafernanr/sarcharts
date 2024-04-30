@@ -32,8 +32,8 @@ class Conf:
                                           '%vmeff']},
               "load": {"arg": "-q", "datasets": [], "labels": [],
                        "hidden": ['runq-sz', 'plist-sz', 'blocked']},
-              # "network": {"arg": "-n ALL", "datasets": [], "labels": [],
-              #         "hidden": []},
+              "network": {"arg": "-n DEV", "datasets": [], "labels": [],
+                          "hidden": []},
               "io": {"arg": "-b", "datasets": [], "labels": [],
                      "hidden": []}
               }
