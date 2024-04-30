@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard</title>
+    <script src="html/js/jquery.js"></script>
+    <script src="html/js/chart.umd.js"></script>
+</head>
+<body>
+  {% include "header.html" %}
+    <div style="height: 400px">
+    <canvas id="{{ chart }}"></canvas>
+  </div>
+<script>
+$(document).ready(function () {
+    var ctx = document.getElementById('{{ chart }}').getContext('2d');
+    var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: {{ details['labels'] }},
+            datasets: [
+              {% for i in range(details['datasets']|length) %}
+              {
+                {{ "hidden: true," if details['datasets'][i]['label'] in details['hidden'] else "" }}
+                label: '{{ details['datasets'][i]['label'] }}',
+                data: {{ details['datasets'][i]['data'] }},
+                borderColor: 'rgb({{ colors[i] }} 0.3)',
+                backgroundColor: 'rgb({{ colors[i] }})'
+              }{{ ", " if not loop.last else "" }}
+              {% endfor %}
+            ]
+          },
+          options: {
+            maintainAspectRatio: false,
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        fontSize: 40
+                    }
+                }]
+            },
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              },
+              title: {
+                display: true,
+                text: '{{ chart }}'
+              }
+            }
+          }
+    });
+});
+
+</script>
+</body>
+</html>
