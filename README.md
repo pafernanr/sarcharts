@@ -11,7 +11,7 @@ Usage: sarcharts.py [Options] [INPUTDIR] [OUTPUTDIR]
     [-d|--debug]: Debug level [D,I,W,E]. Default Warning.
     [-f|--from] DATE: From date (2023-12-01 23:01:00).
     [-h|--help]: Show help.
-    [-l|--limit] N: Limit to last N days. Default is 7 days.
+    [-l|--last] N: Show last N days. Default is 7 days.
     [-t|--to] DATE: To date (2023-12-01 23:01:00).
   Arguments:
     [INPUTDIR]: Default is current path.

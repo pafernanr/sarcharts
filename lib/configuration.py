@@ -17,7 +17,7 @@ class Conf:
     outputdir = "./"
     debug = "W"  # [D, I, W, E]
     dfrom = False
-    limit = 7
+    last = 7
     dto = False
     quiet = False
     charts = {"cpu": {"arg": "-u", "datasets": [], "labels": [],
@@ -61,7 +61,7 @@ class Conf:
               "\n    [-d|--debug]: Debug level [D,I,W,E]. Default Warning."  # noqa E501
               "\n    [-f|--from] DATE: From date (2023-12-01 23:01:00)."
               "\n    [-h|--help]: Show help."
-              "\n    [-l|--limit] N: Limit to last N days. Default is 7 days."
+              "\n    [-l|--last] N: Show last N days. Default is 7 days."
               "\n    [-t|--to] DATE: To date (2023-12-01 23:01:00)."
               "\n  Arguments:"
               "\n    [INPUTDIR]: Default is current path."
@@ -76,7 +76,7 @@ class Conf:
         try:
             options, remainder = getopt.getopt(sys.argv[1:], 'd:f:hl:t:',
                                                ['debug=', 'from=', 'help',
-                                                'limit=', 'to='])
+                                                'last=', 'to='])
             for opt, arg in options:
                 if opt == '-d' or opt == '--debug':
                     Conf.debug = arg
@@ -85,11 +85,17 @@ class Conf:
                         Conf.dfrom = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
                 elif opt == '-h' or opt == '--help':
                     Conf.show_help()
-                elif opt == '-l' or opt == '--limit':
-                    Conf.limit = arg
+                elif opt == '-l' or opt == '--last':
+                    Conf.last = int(arg)
                 elif opt == '-t' or opt == '--to':
                     if Util.is_valid_date(Conf, arg):
                         Conf.dto = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
+
+            if Conf.dto and not Conf.dfrom:
+                Util.debug(Conf, 'E', "'--from' used but no '--to' provided.")
+            if Conf.dfrom and not Conf.dto:
+                Util.debug(Conf, 'E', "'--to' used but no '--from' provided.")
+
             if len(remainder) > 0:
                 if remainder[0].endswith("/"):
                     remainder[0] = remainder[0][:-1]

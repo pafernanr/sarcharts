@@ -15,7 +15,7 @@ if __name__ == "__main__":
     Conf.get_opts()
     sarfiles = Util.get_sarfiles(Conf)
     showheader = ""
-    for f in sarfiles[-Conf.limit:]:
+    for f in sarfiles[-Conf.last:]:
         inputfile = Conf.inputdir + "/" + f
         for k, v in Conf.charts.items():
             csvfile = Conf.outputdir + "sar/" + k + ".csv"
