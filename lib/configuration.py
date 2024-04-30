@@ -3,19 +3,23 @@ Author: Pablo Fernández Rodríguez
 Web: https://github.com/pafernanr/dynflowparser
 Licence: GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
-import os
+import datetime
 import getopt
-import sys
-import shutil
+import os
 from pathlib import Path
+import shutil
+import sys
+from lib.util import Util
 
 
 class Conf:
     inputdir = "."
     outputdir = "./"
-    limit = 7
-    quiet = False
     debug = "W"  # [D, I, W, E]
+    dfrom = False
+    limit = 7
+    dto = False
+    quiet = False
     charts = {"cpu": {"arg": "-u", "datasets": [], "labels": [],
                       "hidden": ['CPU', '%steal', '%idle']},
               "memory": {"arg": "-r", "datasets": [], "labels": [],
@@ -55,8 +59,10 @@ class Conf:
               + " [Options] [INPUTDIR] [OUTPUTDIR]"
               "\n  Options:"
               "\n    [-d|--debug]: Debug level [D,I,W,E]. Default Warning."  # noqa E501
+              "\n    [-f|--from] DATE: From date (2023-12-01 23:01:00)."
               "\n    [-h|--help]: Show help."
               "\n    [-l|--limit] N: Limit to last N days. Default is 7 days."
+              "\n    [-t|--to] DATE: To date (2023-12-01 23:01:00)."
               "\n  Arguments:"
               "\n    [INPUTDIR]: Default is current path."
               "\n    [OUTPUTDIR]: Default is current path plus '/sarcharts/'.")  # noqa E501
@@ -68,16 +74,22 @@ class Conf:
 
     def get_opts():
         try:
-            options, remainder = getopt.getopt(sys.argv[1:], 'hd:l:',
-                                               ['help',
-                                                'debug=', 'limit='])
+            options, remainder = getopt.getopt(sys.argv[1:], 'd:f:hl:t:',
+                                               ['debug=', 'from=', 'help',
+                                                'limit=', 'to='])
             for opt, arg in options:
-                if opt == '-h' or opt == '--help':
-                    Conf.show_help()
-                elif opt == '-d' or opt == '--debug':
+                if opt == '-d' or opt == '--debug':
                     Conf.debug = arg
+                elif opt == '-f' or opt == '--from':
+                    if Util.is_valid_date(Conf, arg):
+                        Conf.dfrom = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
+                elif opt == '-h' or opt == '--help':
+                    Conf.show_help()
                 elif opt == '-l' or opt == '--limit':
                     Conf.limit = arg
+                elif opt == '-t' or opt == '--to':
+                    if Util.is_valid_date(Conf, arg):
+                        Conf.dto = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
             if len(remainder) > 0:
                 if remainder[0].endswith("/"):
                     remainder[0] = remainder[0][:-1]

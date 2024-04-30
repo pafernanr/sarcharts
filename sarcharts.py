@@ -23,7 +23,7 @@ if __name__ == "__main__":
                               + f" {showheader} >> {csvfile}")
         showheader = "| grep -vE '^#'"
 
-    # read csv data into chartjs compatible Lists
+    # convert csv to chartjs compatible Lists
     for k, v in Conf.charts.items():
         csvfile = Conf.outputdir + "sar/" + k + ".csv"
         with open(csvfile) as f:
@@ -34,10 +34,11 @@ if __name__ == "__main__":
                                                    "data": []})
             for line in f:
                 fields = line.strip().split(";")
-                Conf.charts[k]['labels'].append(fields[2])
-                fields = fields[3:]
-                for i in range(len(fields)):
-                    Conf.charts[k]['datasets'][i]['data'].append(fields[i])
+                if Util.in_date_range(Conf, fields[2]):
+                    Conf.charts[k]['labels'].append(fields[2])
+                    fields = fields[3:]
+                    for i in range(len(fields)):
+                        Conf.charts[k]['datasets'][i]['data'].append(fields[i])
 
     # write html output files
     for chart, details in Conf.charts.items():
