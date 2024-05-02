@@ -5,6 +5,7 @@ Web: https://github.com/pafernanr/sarcharts
 Licence: GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
 import os
+import re
 import webbrowser
 from jinja2 import Environment, FileSystemLoader
 from lib.configuration import Conf
@@ -28,16 +29,32 @@ if __name__ == "__main__":
         with open(csvfile) as f:
             line = f.readline().strip()
             headers = line[2:].split(";")
-            for h in headers[3:]:
-                Conf.charts[k]['datasets'].append({"label": h,
-                                                   "data": []})
+            # insert fake item for non multiple charts
+            if not Conf.charts[k]['multiple']:
+                headers.insert(3, "")
             for line in f:
+                if re.match(r"^#", line):
+                    continue
                 fields = line.strip().split(";")
                 if Util.in_date_range(Conf, fields[2]):
-                    Conf.charts[k]['labels'].append(fields[2])
-                    fields = fields[3:]
+                    # insert fake item for non multiple charts
+                    if not Conf.charts[k]['multiple']:
+                        fields.insert(3, "")
+                    if fields[2] not in Conf.charts[k]['labels']:
+                        Conf.charts[k]['labels'].append(fields[2])  # date
+                    item = fields[3].replace("-", "_")
+                    if item == "_1":
+                        item = "ALL"
+                    if item not in Conf.charts[k]['datasets'].keys():
+                        Conf.charts[k]['datasets'][item] = []
+                        for h in headers[4:]:
+                            Conf.charts[k]['datasets'][item].append({"label": h, "values": []})  # noqa E501
+
+                    fields = fields[4:]
                     for i in range(len(fields)):
-                        Conf.charts[k]['datasets'][i]['data'].append(fields[i])
+                        Conf.charts[k]['datasets'][item][i]['values'].append(fields[i])  # noqa E501
+
+    # print(Conf.charts)
 
     # write html output files
     for chart, details in Conf.charts.items():
@@ -54,5 +71,3 @@ if __name__ == "__main__":
             results.write(template.render(context))
 
     webbrowser.open(Conf.outputdir + "/cpu.html", 0, True)
-
-    # print(Conf.charts)

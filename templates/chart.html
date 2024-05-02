@@ -9,22 +9,26 @@
 </head>
 <body>
   {% include "header.html" %}
+    {% for item, data in details['datasets'].items() %}
     <div style="height: 400px">
-    <canvas id="{{ chart }}"></canvas>
-  </div>
+      <canvas id="{{ chart }}_{{ item }}"></canvas>
+    </div>
+    {% endfor %}
 <script>
+  
 $(document).ready(function () {
-    var ctx = document.getElementById('{{ chart }}').getContext('2d');
-    var myChart = new Chart(ctx, {
+    {% for item, data in details['datasets'].items() %}
+    var ctx_{{ item }} = document.getElementById('{{ chart }}_{{ item }}').getContext('2d');
+    var myChart_{{ item }} = new Chart(ctx_{{ item }}, {
           type: 'line',
           data: {
             labels: {{ details['labels'] }},
             datasets: [
-              {% for i in range(details['datasets']|length) %}
+              {% for i in range(data|length) %}
               {
-                {{ "hidden: true," if details['datasets'][i]['label'] in details['hidden'] else "" }}
-                label: '{{ details['datasets'][i]['label'] }}',
-                data: {{ details['datasets'][i]['data'] }},
+                {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
+                label: '{{ data[i]['label'] }}',
+                data: {{ data[i]['values'] }},
                 borderColor: 'rgb({{ colors[i] }} 0.3)',
                 backgroundColor: 'rgb({{ colors[i] }})'
               }{{ ", " if not loop.last else "" }}
@@ -40,11 +44,12 @@ $(document).ready(function () {
               },
               title: {
                 display: true,
-                text: '{{ chart }}'
+                text: '{{ chart }} {{ item }}'
               }
             }
           }
     });
+    {% endfor %}
 });
 
 </script>

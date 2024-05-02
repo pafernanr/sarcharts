@@ -20,28 +20,38 @@ class Conf:
     last = 7
     dto = False
     quiet = False
-    charts = {"cpu": {"arg": "-u", "datasets": [], "labels": [],
-                      "hidden": ['CPU', '%steal', '%idle']},
-              "memory": {"arg": "-r", "datasets": [], "labels": [],
+    charts = {"cpu": {"arg": "-P ALL", "multiple": True, "datasets": {},
+                      "labels": [], "hidden": ['%steal', '%idle']},
+              "disk": {"arg": "-d", "multiple": True, "datasets": {},
+                       "labels": [], "hidden": ['tps', 'dtps', 'bread/s', 'bwrtn/s', 'bdscd/s']},  # noqa E501
+              "hugepages": {"arg": "-H", "multiple": True, "datasets": {},
+                            "labels": [], "hidden": []},
+              "inode": {"arg": "-v", "multiple": False, "datasets": {},
+                        "labels": [], "hidden": []},
+              "io": {"arg": "-b", "multiple": False, "datasets": {},
+                     "labels": [], "hidden": []},
+              # "interrrupts": {"arg": "-I", "multiple": False, "datasets": {},
+              #                 "labels": [], "hidden": []},
+              "load": {"arg": "-q ALL", "multiple": True, "datasets": {},
+                       "labels": [], "hidden": ['runq-sz', 'plist-sz', 'blocked']},  # noqa E501
+              "memory": {"arg": "-r ALL", "multiple": False, "datasets": {}, "labels": [],  # noqa E501
                          "hidden": ['kbmemfree', 'kbavail', 'kbmemused',
                                     'kbbuffers', 'kbcached', 'kbcommit',
                                     '%commit', 'kbactive', 'kbinact',
-                                    'kbdirty']},
-              "swap": {"arg": "-S", "datasets": [], "labels": [],
-                       "hidden": ['kbswpfree', 'kbswpused',
-                                  'kbswpcad', '%swpcad']},
-              "memorypaging": {"arg": "-B", "datasets": [], "labels": [],
-                               "hidden": ['fault/s', 'majflt/s', 'pgfree/s',
-                                          'pgscank/s', 'pgscand/s',
-                                          'pgsteal/s', '%vmeff']},
-              "load": {"arg": "-q", "datasets": [], "labels": [],
-                       "hidden": ['runq-sz', 'plist-sz', 'blocked']},
-              "network": {"arg": "-n DEV", "datasets": [], "labels": [],
-                          "hidden": ['IFACE', 'rxpck/s', 'txpck/s', 'rxcmp/s',
-                                     'txcmp/s', 'rxmcst/s', '%ifutil']},
-              "io": {"arg": "-b", "datasets": [], "labels": [],
-                     "hidden": ['tps', 'dtps', 'bread/s',
-                                'bwrtn/s', 'bdscd/s']}
+                                    'kbdirty', 'kbanonpg', 'kbslab',
+                                    'kbkstack', 'kbpgtbl', 'kbvmused']},
+              "network": {"arg": "-n DEV", "multiple": True, "datasets": {},
+                          "labels": [], "hidden": ['rxpck/s', 'txpck/s', 'rxcmp/s', 'txcmp/s', 'rxmcst/s', '%ifutil']},  # noqa E501
+              "paging": {"arg": "-B", "multiple": False, "datasets": {},
+                         "labels": [], "hidden": ['fault/s', 'majflt/s', 'pgfree/s', 'pgscank/s', 'pgscand/s', 'pgsteal/s', '%vmeff']},  # noqa E501
+              # "powermanagement": {"arg": "-m ALL", "multiple": True,
+              #                     "datasets": {}, "labels": [], "hidden": []},  # noqa E501
+              "swap": {"arg": "-S", "multiple": False, "datasets": {},
+                       "labels": [], "hidden": ['kbswpfree', 'kbswpused', 'kbswpcad', '%swpcad']},  # noqa E501
+              "tasks": {"arg": "-w", "multiple": False, "datasets": {},
+                        "labels": [], "hidden": []}
+              # "tty": {"arg": "-y", "multiple": False, "datasets": {},
+              #         "labels": [], "hidden": []},
               }
     colors = ['255, 99, 132',
               '255, 159, 64',
