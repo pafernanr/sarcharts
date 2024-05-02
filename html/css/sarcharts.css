@@ -1,0 +1,40 @@
+  a:link, a:visited,  a:active {
+    color: #5685bc;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  a:hover, a:focus {
+    color:rgba(255, 0, 0, 0.650);
+    font-weight: bold;
+    text-decoration: none;
+  }
+  span.header { 
+    text-align: center 
+  }
+  div.chart {
+    height: 400px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 15px;
+    margin-bottom: 10px;
+  }
+  div.menucontainer {
+    background-color:#ccc;
+    display:inline;      
+    text-align: center;
+  }
+  div.menucontainer ul li {
+    display: inline;
+    padding: 0.3em;
+    border: 1px solid #ccc;
+  }
+  li.active {
+    background-color: #eee;
+  }
+  li.inactive {
+    background-color: #fff;
+  }  
+  li.disabled {
+    color: #ccc;
+    background-color: #fff;
+  }

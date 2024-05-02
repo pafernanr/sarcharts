@@ -21,7 +21,7 @@ class Util:
                   'E': 3
                   }
         if levels[sev] >= levels[Conf.debug]:
-            print(f"[{sev}] {str(msg)}\n")
+            print(f"[{sev}] {str(msg)}")
         if sev == 'E':
             sys.exit(1)
 
@@ -32,10 +32,10 @@ class Util:
         stdout, stderr = p.communicate()
         stdout = str(stdout.decode("utf-8"))
         stderr = str(stderr.decode("utf-8"))
-        if stderr != "":
-            print(cmd + "\n" + stderr)
-            sys.exit(1)
-        return stdout
+        # if stderr != "":
+        #    print(cmd + "\n" + stderr)
+        #    sys.exit(1)
+        return [stdout, stderr]
 
     def get_sarfiles(Conf):
         sarfiles = []

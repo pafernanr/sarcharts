@@ -30,8 +30,8 @@ class Conf:
                         "labels": [], "hidden": []},
               "io": {"arg": "-b", "multiple": False, "datasets": {},
                      "labels": [], "hidden": []},
-              # "interrrupts": {"arg": "-I", "multiple": False, "datasets": {},
-              #                 "labels": [], "hidden": []},
+              "interrrupts": {"arg": "-I", "multiple": False, "datasets": {},
+                              "labels": [], "hidden": []},
               "load": {"arg": "-q ALL", "multiple": True, "datasets": {},
                        "labels": [], "hidden": ['runq-sz', 'plist-sz', 'blocked']},  # noqa E501
               "memory": {"arg": "-r ALL", "multiple": False, "datasets": {}, "labels": [],  # noqa E501
@@ -40,18 +40,20 @@ class Conf:
                                     '%commit', 'kbactive', 'kbinact',
                                     'kbdirty', 'kbanonpg', 'kbslab',
                                     'kbkstack', 'kbpgtbl', 'kbvmused']},
+              "mount": {"arg": "-F", "multiple": True, "datasets": {},
+                        "labels": [], "hidden": []},
               "network": {"arg": "-n DEV", "multiple": True, "datasets": {},
                           "labels": [], "hidden": ['rxpck/s', 'txpck/s', 'rxcmp/s', 'txcmp/s', 'rxmcst/s', '%ifutil']},  # noqa E501
               "paging": {"arg": "-B", "multiple": False, "datasets": {},
                          "labels": [], "hidden": ['fault/s', 'majflt/s', 'pgfree/s', 'pgscank/s', 'pgscand/s', 'pgsteal/s', '%vmeff']},  # noqa E501
-              # "powermanagement": {"arg": "-m ALL", "multiple": True,
-              #                     "datasets": {}, "labels": [], "hidden": []},  # noqa E501
+              "powermanagement": {"arg": "-m ALL", "multiple": True,
+                                  "datasets": {}, "labels": [], "hidden": []},  # noqa E501
               "swap": {"arg": "-S", "multiple": False, "datasets": {},
                        "labels": [], "hidden": ['kbswpfree', 'kbswpused', 'kbswpcad', '%swpcad']},  # noqa E501
               "tasks": {"arg": "-w", "multiple": False, "datasets": {},
-                        "labels": [], "hidden": []}
-              # "tty": {"arg": "-y", "multiple": False, "datasets": {},
-              #         "labels": [], "hidden": []},
+                        "labels": [], "hidden": []},
+              "tty": {"arg": "-y", "multiple": False, "datasets": {},
+                      "labels": [], "hidden": []},
               }
     colors = ['255, 99, 132',
               '255, 159, 64',
@@ -60,11 +62,11 @@ class Conf:
               '54, 162, 235',
               '153, 102, 255',
               '201, 203, 207',
-              '201, 203, 207',
-              '201, 203, 207',
-              '201, 203, 207',
-              '201, 203, 207',
-              '201, 203, 207']
+              '153, 203, 207',
+              '54, 203, 207',
+              '75, 203, 207',
+              '255, 203, 207',
+              '99, 203, 207']
 
     def show_help(errmsg=""):
         print("Usage: sarcharts.py"

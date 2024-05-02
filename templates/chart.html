@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Dashboard</title>
+    <title>sarcharts {{ hostname }}</title>
+    <link rel="stylesheet" href="html/css/sarcharts.css" />
     <script src="html/js/jquery.js"></script>
     <script src="html/js/chart.umd.js"></script>
 </head>
 <body>
   {% include "header.html" %}
     {% for item, data in details['datasets'].items() %}
-    <div style="height: 400px">
+    <div class="chart">
       <canvas id="{{ chart }}_{{ item }}"></canvas>
     </div>
     {% endfor %}

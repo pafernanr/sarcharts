@@ -1,3 +1,19 @@
+<span class="header">
+<h2>{{ hostname }}</h2>
+<h4>{{ firstdate }} - {{ lastdate }}</h4>
+<p><div class="menucontainer">
+<ul>
 {% for page in pages %}
-<a href="{{ page }}.html">{{ page }}</a> &nbsp;
+  {% if page in notavailable %}
+  <li class="disabled">{{ page }}</li>
+  {% else %}
+    {% if page == chart %}
+    <li class="active"><a href="{{ page }}.html">{{ page }}</a></li>
+    {% else %}
+    <li class="inactive"><a href="{{ page }}.html">{{ page }}</a></li>
+    {% endif %}
+  {% endif %}
 {% endfor %}
+</ul>
+</div></p>
+</span>

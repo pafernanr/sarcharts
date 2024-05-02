@@ -16,14 +16,23 @@ if __name__ == "__main__":
     Conf.get_opts()
     sarfiles = Util.get_sarfiles(Conf)
     showheader = ""
+    notavailable = []
+    Util.debug(Conf, 'W', "Getting data from sar files.")
     for inputfile in sarfiles[-Conf.last:]:
         for k, v in Conf.charts.items():
             csvfile = Conf.outputdir + "sar/" + k + ".csv"
-            Util.exec_command(Conf, f"sadf -dt {inputfile} -- {v['arg']}"
-                              + f" {showheader} >> {csvfile}")
+            [stdout, stderr] = Util.exec_command(Conf, f"sadf -dt {inputfile} -- {v['arg']}"
+                                                 + f" {showheader} >> {csvfile}")
+            if stderr:
+                if "Requested activities not available" in stderr and k not in notavailable:
+                    notavailable.append(k)
         showheader = "| grep -vE '^#'"
 
+    hostname = ""
+    firstdate = ""
+    lastdate = ""
     # convert csv to chartjs compatible Lists
+    Util.debug(Conf, 'W', "Generating Charts.")
     for k, v in Conf.charts.items():
         csvfile = Conf.outputdir + "sar/" + k + ".csv"
         with open(csvfile) as f:
@@ -33,10 +42,13 @@ if __name__ == "__main__":
             if not Conf.charts[k]['multiple']:
                 headers.insert(3, "")
             for line in f:
-                if re.match(r"^#", line):
+                Util.debug(Conf, 'D', csvfile + ": " + line.strip())
+                if "LINUX-RESTART" in line or re.match(r"^#", line):
                     continue
                 fields = line.strip().split(";")
                 if Util.in_date_range(Conf, fields[2]):
+                    if firstdate == "":
+                        firstdate = line.split(";")[2]
                     # insert fake item for non multiple charts
                     if not Conf.charts[k]['multiple']:
                         fields.insert(3, "")
@@ -53,16 +65,21 @@ if __name__ == "__main__":
                     fields = fields[4:]
                     for i in range(len(fields)):
                         Conf.charts[k]['datasets'][item][i]['values'].append(fields[i])  # noqa E501
-
+            if line != "":
+                hostname = line.split(";")[0]
+                lastdate = line.split(";")[2]
     # print(Conf.charts)
-
     # write html output files
     for chart, details in Conf.charts.items():
         context = {
                     "chart": chart,
                     "details": details,
                     "pages": Conf.charts.keys(),
-                    "colors": Conf.colors
+                    "colors": Conf.colors,
+                    "notavailable": notavailable,
+                    "hostname": hostname,
+                    "firstdate": firstdate,
+                    "lastdate": lastdate
                 }
         parent = os.path.dirname(os.path.realpath(__file__)) + "/templates/"
         environment = Environment(loader=FileSystemLoader(parent))
