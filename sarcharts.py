@@ -62,14 +62,13 @@ if __name__ == "__main__":
                         for h in headers[4:]:
                             Conf.charts[k]['datasets'][item].append({"label": h, "values": []})  # noqa E501
 
-                    fields = fields[4:]
-                    for i in range(len(fields)):
-                        Conf.charts[k]['datasets'][item][i]['values'].append(fields[i])  # noqa E501
+                    for i in range(len(fields[4:])):
+                        Conf.charts[k]['datasets'][item][i]['values'].append(fields[i+4])  # noqa E501
             if line != "":
-                hostname = line.split(";")[0]
-                lastdate = line.split(";")[2]
-    # print(Conf.charts)
-    # write html output files
+                hostname = fields[0]
+                lastdate = fields[2]
+
+    # write output Charts
     for chart, details in Conf.charts.items():
         context = {
                     "chart": chart,
