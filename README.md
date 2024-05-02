@@ -18,3 +18,7 @@ Usage: sarcharts.py [Options] [INPUTDIR] [OUTPUTDIR]
     [OUTPUTDIR]: Default is current path plus '/sarcharts/'.
 ~~~
 
+| Example Chart |
+| --- |
+| ![](_README_files/sarcharts.png) |
+
