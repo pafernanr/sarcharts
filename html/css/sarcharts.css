@@ -15,7 +15,7 @@
     color: #5685bc;
     text-decoration: none;
   }
-  a:hover, a:focus {
+  a:hover {
     color:rgba(255, 0, 0, 0.650);
     text-decoration: none;
   }
@@ -45,6 +45,16 @@
     background-color: #fff;
   }  
   li.disabled {
+    color: #ccc;
+    background-color: #fff;
+  }
+  li.i_active {
+    background-color: #eee;
+  }
+  li.i_inactive {
+    background-color: #fff;
+  }  
+  li.i_disabled {
     color: #ccc;
     background-color: #fff;
   }

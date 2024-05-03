@@ -13,61 +13,88 @@
 </head>
 <body>
   {% include "header.html" %}
-    {% for item, data in details['datasets'].items() %}
+  <div class="menucontainer">
+    <ul>
+  {% for item in details['datasets'].keys() %}
+    {% if item != "" %}
+      <li class="i_inactive"><a href='#'>{{ item }}</a></li>
+    {% endif %}
+  {% endfor %}
+    </ul>
+  </div>
     <div class="chart">
-      <canvas id="{{ chart }}_{{ item }}"></canvas>
+      <canvas id="chartcanvas"></canvas>
     </div>
-    {% endfor %}
 <script>
-  
-$(document).ready(function () {
-    {% for item, data in details['datasets'].items() %}
-    var ctx_{{ item }} = document.getElementById('{{ chart }}_{{ item }}').getContext('2d');
-    var myChart_{{ item }} = new Chart(ctx_{{ item }}, {
-          type: 'line',
-          data: {
-            labels: {{ details['labels'] }},
-            datasets: [
-              {% for i in range(data|length) %}
-              {
-                {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
-                label: '{{ data[i]['label'] }}',
-                data: {{ data[i]['values'] }},
-                borderColor: 'rgb({{ colors[i] }} 0.3)',
-                backgroundColor: 'rgb({{ colors[i] }})'
-              }{{ ", " if not loop.last else "" }}
-              {% endfor %}
-            ]
-          },
-          options: {
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins: {
-              legend: {
-                position: 'bottom'
-              },
-              title: {
-                display: true,
-                text: '{{ chart }} {{ item }}'
-              },
-              zoom: {
-                zoom: {
-                  drag: {
-                    enabled: true
-                  },
-                  wheel: {
-                    enabled: true,
-                  },
-                  pinch: {
-                    enabled: true
-                  },
-                  mode: 'x',
-                }
-              }
-            }
+$('.i_inactive').click(function() {
+  $(".i_active").attr("class","i_inactive");
+  $(this).attr("class","i_active");
+  showChart($(this).text());
+});
+
+function showChart(name) {
+  myChart.destroy();
+  myChart = new Chart(ctx, {
+    type: 'line',
+      data: {
+        labels: myCharts[name]['labels'],
+        datasets: myCharts[name]['datasets']
+      },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        },
+        title: {
+          display: true,
+          text: name
+        },
+        zoom: {
+          zoom: {
+            drag: {
+              enabled: true
+            },
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'x',
           }
-    });
+        }
+      }
+    }
+  });
+}
+
+var myCharts = {
+  {% for item, data in details['datasets'].items() %}
+  '{{ item }}': {
+    'labels': {{ details['labels'] }},
+    'datasets': [
+    {% for i in range(data|length) %}
+      {
+      {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
+      label: '{{ data[i]['label'] }}',
+      data: {{ data[i]['values'] }},
+      borderColor: 'rgb({{ colors[i] }} 0.3)',
+      backgroundColor: 'rgb({{ colors[i] }})'
+      }{{ ", " if not loop.last else "" }}
     {% endfor %}
+    ]
+  }{{ ", " if not loop.last else "" }}
+  {% endfor %}
+}
+
+var ctx = document.getElementById('chartcanvas').getContext('2d');
+var myChart = new Chart(ctx);
+
+$(document).ready(function () {
+  showChart($('.i_inactive').first().text());
+  $('.i_inactive').first().attr("class", "i_active");
 });
 
 </script>
