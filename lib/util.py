@@ -4,7 +4,6 @@ Web: https://github.com/pafernanr/dynflowparser
 Licence: GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
 import datetime
-import fnmatch
 import re
 from pathlib import Path
 import os

@@ -8,11 +8,12 @@ import os
 import re
 import webbrowser
 from jinja2 import Environment, FileSystemLoader
-from lib.configuration import Conf
-from lib.util import Util
+
+from sarcharts.lib.configuration import Conf
+from sarcharts.lib.util import Util
 
 
-if __name__ == "__main__":
+def main():
     Conf.get_opts()
     sarfiles = Util.get_sarfiles(Conf)
     showheader = ""
@@ -87,3 +88,7 @@ if __name__ == "__main__":
             results.write(template.render(context))
 
     webbrowser.open(Conf.outputdir + "/cpu.html", 0, True)
+
+
+if __name__ == "__main__":
+    main()
