@@ -42,7 +42,7 @@ class Util:
         sarfiles = []
         filelist = sorted(Path(Conf.inputdir).iterdir(), key=os.path.getmtime)
         # lst = ['this','is','just','a','test']
-        filtered = fnmatch.filter(filelist, 'th?s')
+        # filtered = fnmatch.filter(filelist, 'th?s')
         for i in range(len(filelist)):
             f = filelist[i]
             if f.match('sa[0-9][0-9]'):
