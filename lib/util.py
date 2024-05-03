@@ -4,6 +4,7 @@ Web: https://github.com/pafernanr/dynflowparser
 Licence: GPLv3 https://www.gnu.org/licenses/gpl-3.0.en.html
 '''
 import datetime
+import fnmatch
 import re
 from pathlib import Path
 import os
@@ -40,6 +41,8 @@ class Util:
     def get_sarfiles(Conf):
         sarfiles = []
         filelist = sorted(Path(Conf.inputdir).iterdir(), key=os.path.getmtime)
+        # lst = ['this','is','just','a','test']
+        filtered = fnmatch.filter(filelist, 'th?s')
         for i in range(len(filelist)):
             f = filelist[i]
             if f.match('sa[0-9][0-9]'):
