@@ -1,5 +1,5 @@
 ### sarcharts
-Generates Charts from sar files using [Chart.js](https://www.chartjs.org/). It reads `/var/log/sa/sa*` files from INPUT folder and generates Charts for the last 7 days (by default). Charts can be zoomed in and out.
+Generates Charts from sar files using [Chart.js](https://www.chartjs.org/). It reads [sysstat](https://sysstat.github.io/) `sa*` files from INPUT folder and generates Charts for the last 7 days (by default). Charts can be zoomed in and out.
 
 ### Requirements
 `sadf` command is needed to read sar files. Hence sysstat package is required.
