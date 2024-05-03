@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="html/css/sarcharts.css" />
     <script src="html/js/jquery.js"></script>
     <script src="html/js/chart.umd.js"></script>
+    <script src="html/js/hammer.min.js"></script>
+    <script src="html/js/chartjs-plugin-zoom.min.js"></script>
+
 </head>
 <body>
   {% include "header.html" %}
@@ -46,6 +49,20 @@ $(document).ready(function () {
               title: {
                 display: true,
                 text: '{{ chart }} {{ item }}'
+              },
+              zoom: {
+                zoom: {
+                  drag: {
+                    enabled: true
+                  },
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true
+                  },
+                  mode: 'x',
+                }
               }
             }
           }
