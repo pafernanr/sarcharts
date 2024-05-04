@@ -44,9 +44,9 @@ class Conf:
                         "labels": [], "hidden": []},
               "netdevice": {"arg": "-n DEV", "multiple": True, "datasets": {},
                           "labels": [], "hidden": ['rxpck/s', 'txpck/s', 'rxcmp/s', 'txcmp/s', 'rxmcst/s', '%ifutil']},  # noqa E501
-              "netdevicee": {"arg": "-n EDEV", "multiple": True, "datasets": {},
+              "netdevicee": {"arg": "-n EDEV", "multiple": True, "datasets": {},  # noqa E501
                              "labels": [], "hidden": []},
-              "netfiberchannel": {"arg": "-n FC", "multiple": True, "datasets": {},
+              "netfiberchannel": {"arg": "-n FC", "multiple": True, "datasets": {},  # noqa E501
                                   "labels": [], "hidden": []},
               "neticmp": {"arg": "-n ICMP", "multiple": True, "datasets": {},
                           "labels": [], "hidden": []},
@@ -64,7 +64,7 @@ class Conf:
                          "labels": [], "hidden": []},
               "netsock": {"arg": "-n SOCK", "multiple": False, "datasets": {},
                           "labels": [], "hidden": []},
-              "netsock6": {"arg": "-n SOCK6", "multiple": False, "datasets": {},
+              "netsock6": {"arg": "-n SOCK6", "multiple": False, "datasets": {},  # noqa E501
                            "labels": [], "hidden": []},
               "nettcp": {"arg": "-n TCP", "multiple": True, "datasets": {},
                          "labels": [], "hidden": []},
@@ -120,56 +120,56 @@ class Conf:
         else:
             sys.exit(0)
 
-    def get_opts():
+    def get_opts(self):
         try:
             options, remainder = getopt.getopt(sys.argv[1:], 'd:f:hl:t:',
                                                ['debug=', 'from=', 'help',
                                                 'last=', 'to='])
             for opt, arg in options:
                 if opt == '-d' or opt == '--debug':
-                    Conf.debug = arg
+                    self.debug = arg
                 elif opt == '-f' or opt == '--from':
                     if Util.is_valid_date(Conf, arg):
-                        Conf.dfrom = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
+                        self.dfrom = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
                 elif opt == '-h' or opt == '--help':
-                    Conf.show_help()
+                    self.show_help()
                 elif opt == '-l' or opt == '--last':
-                    Conf.last = int(arg)
+                    self.last = int(arg)
                 elif opt == '-t' or opt == '--to':
                     if Util.is_valid_date(Conf, arg):
-                        Conf.dto = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
+                        self.dto = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
 
-            if Conf.dto and not Conf.dfrom:
+            if self.dto and not self.dfrom:
                 Util.debug(Conf, 'E', "'--from' used but no '--to' provided.")
-            if Conf.dfrom and not Conf.dto:
+            if self.dfrom and not self.dto:
                 Util.debug(Conf, 'E', "'--to' used but no '--from' provided.")
 
             if len(remainder) > 0:
                 if remainder[0].endswith("/"):
                     remainder[0] = remainder[0][:-1]
-                Conf.inputdir = remainder[0]
-                if not Path(Conf.inputdir).is_dir():
-                    Conf.show_help("provided sosreport '" + Conf.inputdir
+                self.inputdir = remainder[0]
+                if not Path(self.inputdir).is_dir():
+                    self.show_help("provided sosreport '" + self.inputdir
                                    + "' is not a folder")
                 if len(remainder) == 2:
-                    Conf.outputdir = remainder[1]
-                    if not Path(Conf.outputdir).is_dir():
-                        Conf.show_help("provided outputdir "
-                                       + Conf.outputdir
+                    self.outputdir = remainder[1]
+                    if not Path(self.outputdir).is_dir():
+                        self.show_help("provided outputdir "
+                                       + self.outputdir
                                        + " is not a folder or doesn't exists")
                 elif len(remainder) > 2:
-                    Conf.show_help("Wrong parameters count")
+                    self.show_help("Wrong parameters count")
 
-            Conf.outputdir = str(Conf.outputdir + "sarcharts/")
+            self.outputdir = str(self.outputdir + "sarcharts/")
 
-            if os.path.exists(Conf.outputdir):
+            if os.path.exists(self.outputdir):
                 for d in ["/sar", "/html"]:
-                    shutil.rmtree(Conf.outputdir + d)
+                    shutil.rmtree(self.outputdir + d)
 
-            os.makedirs(Conf.outputdir + "/sar")
+            os.makedirs(self.outputdir + "/sar")
             shutil.copytree(os.path.dirname(
                         os.path.realpath(__file__)) + "/../html",
-                        Conf.outputdir + "/html")
+                        self.outputdir + "/html")
 
         except Exception as e:
             print(e)

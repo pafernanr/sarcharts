@@ -15,7 +15,7 @@ import sys
 class Util:
     USERS = {}
 
-    def debug(Conf, sev, msg):
+    def debug(self, Conf, sev, msg):
         levels = {'D': 0,
                   'I': 1,
                   'W': 2,
@@ -26,8 +26,8 @@ class Util:
         if sev == 'E':
             sys.exit(1)
 
-    def exec_command(Conf, cmd):
-        Util.debug(Conf, "D", "execcommand: " + cmd)
+    def exec_command(self, Conf, cmd):
+        self.debug(Conf, "D", "execcommand: " + cmd)
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
@@ -38,7 +38,7 @@ class Util:
         #    sys.exit(1)
         return [stdout, stderr]
 
-    def get_sarfiles(Conf):
+    def get_sarfiles(self, Conf):
         sarfiles = []
         filelist = sorted(Path(Conf.inputdir).iterdir(), key=os.path.getmtime)
         # lst = ['this','is','just','a','test']
@@ -49,15 +49,15 @@ class Util:
                 sarfiles.append(str(f))
         return sarfiles
 
-    def is_valid_date(Conf, d):
+    def is_valid_date(self, Conf, d):
         if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', d):
             return True
         else:
-            Util.debug(Conf, 'E', "ERROR: date '" + d
+            self.debug(Conf, 'E', "ERROR: date '" + d
                        + "' doesn't match %Y-%m-%d %H:%M:%S")
 
-    def in_date_range(Conf, d):
-        if Util.is_valid_date(Conf, d):
+    def in_date_range(self, Conf, d):
+        if self.is_valid_date(Conf, d):
             d = datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S')
             if Conf.dfrom and Conf.dto:
                 if d >= Conf.dfrom and d <= Conf.dto:
