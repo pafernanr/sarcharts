@@ -1,4 +1,5 @@
 import datetime
+import fnmatch
 import re
 from pathlib import Path
 import os
@@ -10,9 +11,12 @@ def debug(debuglevel, sev, msg):
     levels = {'D': 0,
               'I': 1,
               'W': 2,
-              'E': 3
+              'E': 3,
+              '': 4
               }
-    if levels[sev] >= levels[debuglevel]:
+    if sev == "":
+        print(f"{str(msg)}")
+    elif levels[sev] >= levels[debuglevel]:
         print(f"[{sev}] {str(msg)}")
     if sev == 'E':
         sys.exit(1)
@@ -31,16 +35,28 @@ def exec_command(debuglevel, cmd):
     return [stdout, stderr]
 
 
-def get_sarfiles(Conf):
-    sarfiles = []
-    filelist = sorted(Path(Conf.inputdir).iterdir(), key=os.path.getmtime)
-    # lst = ['this','is','just','a','test']
-    # filtered = fnmatch.filter(filelist, 'th?s')
-    for i in range(len(filelist)):
-        f = filelist[i]
-        if f.match('sa[0-9][0-9]'):
-            sarfiles.append(str(f))
-    return sarfiles
+def get_filelist(filepaths):
+    files = []
+    for path in filepaths:
+        # path is a folder
+        if Path(path).is_dir():
+            for f in os.listdir(path):
+                if fnmatch.fnmatch(f, 'sa??'):
+                    files.append(path + str(f))
+        # path is a file
+        elif Path(path).is_file():
+            files.append(str(path))
+    return sortfiles_by_mtime(files)
+
+
+def sortfiles_by_mtime(files):
+    details = {}
+    for f in files:
+        mtime = os.path.getmtime(f)
+        details[mtime] = f
+    # 'sorted' returns a 'set' hence no duplicates
+    # but it should be converted to a list
+    return list(dict(sorted(details.items())).values())
 
 
 def is_valid_date(Conf, d):

@@ -1,5 +1,5 @@
-from sarcharts.lib.util import debug, is_valid_date, get_sarfiles, exec_command, in_date_range  # noqa E501
-import datetime
+from sarcharts.lib.util import debug, is_valid_date, get_filelist, exec_command, in_date_range  # noqa E501
+from datetime import datetime
 import getopt
 from jinja2 import Environment, FileSystemLoader
 import os
@@ -11,11 +11,10 @@ import webbrowser
 
 
 class SarCharts:
-    inputdir = "."
-    outputdir = "./"
+    sarfilespaths = ["."]
+    outputpath = "."
     debuglevel = "W"  # [D, I, W, E]
     dfrom = False
-    last = 7
     dto = False
     quiet = False
     charts = {"cpu": {"arg": "-P ALL", "multiple": True, "datasets": {},
@@ -101,130 +100,135 @@ class SarCharts:
               '149, 245, 44']
 
     def __init__(self):
-        options, remainder = getopt.getopt(sys.argv[1:], 'd:f:hl:t:',
+        options, remainder = getopt.getopt(sys.argv[1:], 'd:f:ho:t:',
                                            ['debug=', 'from=', 'help',
-                                            'last=', 'to='])
+                                            'outputpath=', 'to='])
         for opt, arg in options:
             if opt == '-d' or opt == '--debug':
-                self.debug = arg
+                self.debuglevel = arg
             elif opt == '-f' or opt == '--from':
                 if is_valid_date(self, arg):
-                    self.dfrom = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
+                    self.dfrom = datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')
             elif opt == '-h' or opt == '--help':
                 self.show_help()
                 exit()
-            elif opt == '-l' or opt == '--last':
-                self.last = int(arg)
+            elif opt == '-o' or opt == '--outputpath':
+                if not Path(arg).is_dir():
+                    self.show_help("provided outputpath '"
+                                   + self.outputpath
+                                   + "' is not a folder or doesn't exists")
+                    exit(1)
+                self.outputpath = str(arg + "/sarcharts")
             elif opt == '-t' or opt == '--to':
                 if is_valid_date(self, arg):
-                    self.dto = datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')  # noqa E501
-
+                    self.dto = datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')
+        # check if '--to' and '--from' where properly provided
         if self.dto and not self.dfrom:
             debug(self.debuglevel, 'E',
                   "'--from' used but no '--to' provided.")
         if self.dfrom and not self.dto:
             debug(self.debuglevel, 'E',
                   "'--to' used but no '--from' provided.")
-
+        # get sarfilespaths
         if len(remainder) > 0:
-            if remainder[0].endswith("/"):
-                remainder[0] = remainder[0][:-1]
-            self.inputdir = remainder[0]
-            if not Path(self.inputdir).is_dir():
-                self.show_help("provided sosreport '" + self.inputdir
-                               + "' is not a folder")
-                exit(1)
-            if len(remainder) == 2:
-                self.outputdir = remainder[1]
-                if not Path(self.outputdir).is_dir():
-                    self.show_help("provided outputdir "
-                                   + self.outputdir
-                                   + " is not a folder or doesn't exists")
-                    exit(1)
-            elif len(remainder) > 2:
-                self.show_help("Wrong parameters count")
-                exit(1)
-
-        self.outputdir = str(self.outputdir + "sarcharts/")
-
-        for d in ["/sar", "/html"]:
-            if os.path.exists(self.outputdir + d):
-                shutil.rmtree(self.outputdir + d)
-
-        os.makedirs(self.outputdir + "/sar")
+            self.sarfilespaths = []
+            for path in remainder:
+                self.sarfilespaths.append(path)
+        # create required files on outputpath
+        if os.path.exists(self.outputpath):
+            shutil.rmtree(self.outputpath)
+        os.makedirs(self.outputpath + "/sar")
         shutil.copytree(os.path.dirname(
                         os.path.realpath(__file__)) + "/html",
-                        self.outputdir + "/html")
+                        self.outputpath + "/html")
 
     def show_help(self, errmsg=""):
         print("Usage: sarcharts.py"
-              + " [Options] [INPUTDIR] [OUTPUTDIR]"
+              + " [Options] [sarfilespath] [sarfilespath] [sarfilespath]..."
               "\n  Options:"
               "\n    [-d|--debug]: Debug level [D,I,W,E]. Default Warning."  # noqa E501
               "\n    [-f|--from] DATE: From date (2023-12-01 23:01:00)."
               "\n    [-h|--help]: Show help."
-              "\n    [-l|--last] N: Show last N days. Default is 7 days."
+              "\n    [-o|--outputpath] Path to put output files. Default is `./sarcharts`."  # noqa E501
               "\n    [-t|--to] DATE: To date (2023-12-01 23:01:00)."
               "\n  Arguments:"
-              "\n    [INPUTDIR]: Default is current path."
-              "\n    [OUTPUTDIR]: Default is current path plus '/sarcharts/'.")  # noqa E501
+              "\n    [sarfilespath/s]: Multiple paths and patterns allowed. Default is `./sa??`."  # noqa E501
+              "\n"
+              "\n  Examples:"
+              "\n    - sarcharts.py /var/log/sa/sa*"
+              "\n    - sarcharts.py /tmp/previousmonth/sa?? sa08 sa09 sa1?")
         if errmsg != "":
             print("\nERROR: " + errmsg)
 
-    def output(self):
-        sarfiles = get_sarfiles(self)
+    def main(self):
+        sarfiles = get_filelist(self.sarfilespaths)
+        debug(self.debuglevel, 'D', "sarfiles: " + str(sarfiles))
+        # merge sar files to csv files
         showheader = ""
         notavailable = []
-        debug(self.debuglevel, 'W', "Getting data from sar files.")
-        for inputfile in sarfiles[-self.last:]:
+        debug(self.debuglevel, '', "Getting data from sar files.")
+        for inputfile in sarfiles:
             for k, v in self.charts.items():
-                csvfile = self.outputdir + "sar/" + k + ".csv"
-                [stdout, stderr] = exec_command(self.debuglevel, f"sadf -dt {inputfile} -- {v['arg']}"  # noqa E501
-                                                     + f" {showheader} >> {csvfile}")  # noqa E501
+                csvfile = self.outputpath + "/sar/" + k + ".csv"
+                command = f"sadf -dt {inputfile} -- {v['arg']} {showheader}"
+                [stdout, stderr] = exec_command(self.debuglevel, command)
                 if stderr:
-                    if "Requested activities not available" in stderr and k not in notavailable:  # noqa E501
-                        notavailable.append(k)
+                    if "Requested activities not available" in stderr:
+                        debug(self.debuglevel, 'I', stderr.strip())
+                        if k not in notavailable:
+                            notavailable.append(k)
+                    else:
+                        debug(self.debuglevel, 'W', stderr.strip())
+                else:
+                    debug(self.debuglevel, 'D', "Merge " + inputfile
+                          + " to " + csvfile)
+                    if os.path.exists(csvfile):
+                        with open(csvfile, "a") as myfile:
+                            myfile.write(stdout)
+                    else:
+                        with open(csvfile, "w") as myfile:
+                            myfile.write(stdout)
             showheader = "| grep -vE '^#'"
 
+        # convert csv to chartjs compatible Lists
         hostname = ""
         firstdate = ""
         lastdate = ""
-        # convert csv to chartjs compatible Lists
-        debug(self.debuglevel, 'W', "Generating Charts.")
+        debug(self.debuglevel, '', "Generating Charts.")
         for k, v in self.charts.items():
-            csvfile = self.outputdir + "sar/" + k + ".csv"
-            with open(csvfile) as f:
-                line = f.readline().strip()
-                headers = line[2:].split(";")
-                # insert fake item for non multiple charts
-                if not self.charts[k]['multiple']:
-                    headers.insert(3, "")
-                for line in f:
-                    debug(self.debuglevel, 'D', csvfile + ": " + line.strip())
-                    if "LINUX-RESTART" in line or re.match(r"^#", line):
-                        continue
-                    fields = line.strip().split(";")
-                    if in_date_range(self, fields[2]):
-                        if firstdate == "":
-                            firstdate = line.split(";")[2]
-                        # insert fake item for non multiple charts
-                        if not self.charts[k]['multiple']:
-                            fields.insert(3, "")
-                        if fields[2] not in self.charts[k]['labels']:
-                            self.charts[k]['labels'].append(fields[2])  # date
-                        item = fields[3].replace("-", "_")
-                        if item == "_1":
-                            item = "ALL"
-                        if item not in self.charts[k]['datasets'].keys():
-                            self.charts[k]['datasets'][item] = []
-                            for h in headers[4:]:
-                                self.charts[k]['datasets'][item].append({"label": h, "values": []})  # noqa E501
+            if k not in notavailable:
+                csvfile = self.outputpath + "/sar/" + k + ".csv"
+                with open(csvfile) as f:
+                    line = f.readline().strip()
+                    headers = line.split(";")[4:]
+                    # insert fake item for non multiple charts
+                    if not self.charts[k]['multiple']:
+                        headers.insert(0, "")
+                    for line in f:
+                        if "LINUX-RESTART" in line or re.match(r"^#", line):
+                            continue
+                        fields = line.strip().split(";")
+                        if in_date_range(self, fields[2]):
+                            if firstdate == "":
+                                firstdate = line.split(";")[2]
+                            # insert fake item on non multiple charts
+                            if not self.charts[k]['multiple']:
+                                fields.insert(3, "")
+                            # add date field to Chart labels
+                            if fields[2] not in self.charts[k]['labels']:
+                                self.charts[k]['labels'].append(fields[2])
+                            item = fields[3]
+                            if item not in self.charts[k]['datasets'].keys():
+                                self.charts[k]['datasets'][item] = []
+                                for h in headers:
+                                    i = {"label": h, "values": []}
+                                    self.charts[k]['datasets'][item].append(i)
 
-                        for i in range(len(fields[4:])):
-                            self.charts[k]['datasets'][item][i]['values'].append(fields[i+4])  # noqa E501
-                if line != "":
-                    hostname = fields[0]
-                    lastdate = fields[2]
+                            for i in range(len(fields[4:])):
+                                self.charts[k]['datasets'][item][i]['values'].append(fields[i+4])  # noqa E501
+                    if line != "":
+                        hostname = fields[0]
+                        lastdate = fields[2]
 
         # write output Charts
         for chart, details in self.charts.items():
@@ -238,13 +242,15 @@ class SarCharts:
                         "firstdate": firstdate,
                         "lastdate": lastdate
                     }
-            parent = os.path.dirname(os.path.realpath(__file__)) + "/templates/"  # noqa E501
+            parent = (os.path.dirname(os.path.realpath(__file__))
+                      + "/templates/")
             environment = Environment(loader=FileSystemLoader(parent))
             template = environment.get_template("chart.html")
-            with open(self.outputdir + f"/{chart}.html", mode="w", encoding="utf-8") as results:  # noqa E501
+            outputfile = self.outputpath + f"/{chart}.html"
+            with open(outputfile, mode="w", encoding="utf-8") as results:
                 results.write(template.render(context))
 
-        webbrowser.open(self.outputdir + "/cpu.html", 0, True)
+        webbrowser.open(self.outputpath + "/cpu.html", 0, True)
 
 
-SarCharts().output()
+SarCharts().main()

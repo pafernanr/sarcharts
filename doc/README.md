@@ -6,16 +6,19 @@ Reads [sysstat](https://sysstat.github.io/) `sa*` files from INPUTDIR and genera
 
 ### Usage
 ~~~
-Usage: sarcharts.py [Options] [INPUTDIR] [OUTPUTDIR]
+Usage: sarcharts.py [Options] [sarfilespath] [sarfilespath] [sarfilespath]...
   Options:
     [-d|--debug]: Debug level [D,I,W,E]. Default Warning.
     [-f|--from] DATE: From date (2023-12-01 23:01:00).
     [-h|--help]: Show help.
-    [-l|--last] N: Show last N days. Default is 7 days.
+    [-o|--outputpath] Path to put output files. Default is `./sarcharts`.
     [-t|--to] DATE: To date (2023-12-01 23:01:00).
   Arguments:
-    [INPUTDIR]: Default is current path.
-    [OUTPUTDIR]: Default is current path plus '/sarcharts/'.
+    [sarfilespath/s]: Multiple paths and patterns allowed. Default is `./sa??`.
+
+  Examples:
+    - sarcharts.py /var/log/sa/sa*
+    - sarcharts.py /tmp/previousmonth/sa?? sa08 sa09 sa1?
 ~~~
 
 | Example Chart |
