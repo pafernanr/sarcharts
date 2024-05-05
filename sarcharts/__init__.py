@@ -21,7 +21,7 @@ class SarCharts:
                       "labels": [], "hidden": ['%steal', '%idle']},
               "disk": {"arg": "-d", "multiple": True, "datasets": {},
                        "labels": [], "hidden": ['tps', 'dtps', 'bread/s', 'bwrtn/s', 'bdscd/s']},  # noqa E501
-              "hugepages": {"arg": "-H", "multiple": True, "datasets": {},
+              "hugepages": {"arg": "-H", "multiple": False, "datasets": {},
                             "labels": [], "hidden": []},
               "inodes": {"arg": "-v", "multiple": False, "datasets": {},
                          "labels": [], "hidden": []},
@@ -199,35 +199,37 @@ class SarCharts:
             if k not in notavailable:
                 csvfile = self.outputpath + "/sar/" + k + ".csv"
                 with open(csvfile) as f:
+                    # set the first data field
+                    datastart = 4 if self.charts[k]['multiple'] else 3
+                    # get headers from first line
                     line = f.readline().strip()
-                    headers = line.split(";")[4:]
-                    # insert fake item for non multiple charts
-                    if not self.charts[k]['multiple']:
-                        headers.insert(0, "")
+                    headers = line.split(";")[datastart:]
+                    # get hostname and first stats date
+                    pos = f.tell()
+                    line = f.readline().split(";")
+                    firstdate = line[2]
+                    hostname = line[0]
+                    # seek file to first stats line
+                    f.seek(pos)
                     for line in f:
                         if "LINUX-RESTART" in line or re.match(r"^#", line):
                             continue
                         fields = line.strip().split(";")
                         if in_date_range(self, fields[2]):
-                            if firstdate == "":
-                                firstdate = line.split(";")[2]
-                            # insert fake item on non multiple charts
-                            if not self.charts[k]['multiple']:
-                                fields.insert(3, "")
+                            # set fake item on non multiple charts
+                            item = fields[3] if self.charts[k]['multiple'] else ""
                             # add date field to Chart labels
                             if fields[2] not in self.charts[k]['labels']:
                                 self.charts[k]['labels'].append(fields[2])
-                            item = fields[3]
                             if item not in self.charts[k]['datasets'].keys():
                                 self.charts[k]['datasets'][item] = []
                                 for h in headers:
                                     i = {"label": h, "values": []}
                                     self.charts[k]['datasets'][item].append(i)
 
-                            for i in range(len(fields[4:])):
-                                self.charts[k]['datasets'][item][i]['values'].append(fields[i+4])  # noqa E501
+                            for i in range(len(fields[datastart:])):
+                                self.charts[k]['datasets'][item][i]['values'].append(fields[i+datastart])  # noqa E501
                     if line != "":
-                        hostname = fields[0]
                         lastdate = fields[2]
 
         # write output Charts
