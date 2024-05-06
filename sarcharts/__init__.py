@@ -1,101 +1,105 @@
 import datetime
-import getopt
 import os
-import sys
 
-from pathlib import Path
+import argparse
+import fnmatch
 import shutil
 import webbrowser
 
-from sarcharts.lib.chartconf import ChartConf
 from sarcharts.lib.chartjs import ChartJS
+from sarcharts.lib.chartsconf import ChartsConf
 from sarcharts.lib.sadf import Sadf
 from sarcharts.lib import util
 
 
 class SarCharts:
-    C = ChartConf()
+    args = ()
+    cwd = os.getcwd()
+    C = ChartsConf()
+
+    def valid_date(self, date):
+        try:
+            return datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            raise argparse.ArgumentTypeError(f"not a valid date: {date!r}")
+
+    def valid_path(self, path):
+        if os.path.exists(path):
+            return path
+        else:
+            raise argparse.ArgumentTypeError(f"not a valid path: {path!r}")
+
+    def default_sarfiles(self):
+        files = []
+        for f in os.listdir(self.cwd):
+            if fnmatch.fnmatch(f, 'sa??'):
+                files.append(f"{self.cwd}/{str(f)}")
+        return files
 
     def __init__(self):
-        options, remainder = getopt.getopt(sys.argv[1:], 'd:f:ho:t:',
-                                           ['debug=', 'from=', 'help',
-                                            'outputpath=', 'to='])
-        for opt, arg in options:
-            if opt in ['-d', '--debug']:
-                self.C.debuglevel = arg
-            elif opt in ['-f', '--from']:
-                if util.is_valid_date(self, arg):
-                    self.C.dfrom = (
-                        datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')
-                    )
-            elif opt in ['-h', '--help']:
-                self.show_help()
-                sys.exit()
-            elif opt in ['-o', '--outputpath']:
-                if not Path(arg).is_dir():
-                    self.show_help("provided outputpath '"
-                                   + self.C.outputpath
-                                   + "' is not a folder or doesn't exists")
-                    sys.exit(1)
-                self.C.outputpath = arg
-            elif opt in ['-t', '--to']:
-                if util.is_valid_date(self, arg):
-                    self.C.dto = (
-                        datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')
-                    )
-        # check if '--to' and '--from' where properly provided
-        if self.C.dto and not self.C.dfrom:
-            util.debug(self.C.debuglevel, 'E',
-                       "'--from' used but no '--to' provided.")
-        if self.C.dfrom and not self.C.dto:
-            util.debug(self.C.debuglevel, 'E',
-                       "'--to' used but no '--from' provided.")
-        # get sarfilespaths
-        if len(remainder) > 0:
-            self.C.sarfilespaths = []
-            for path in remainder:
-                self.C.sarfilespaths.append(path)
+        parser = argparse.ArgumentParser(description="sarcharts usage")
+        parser.add_argument(
+            '-d',
+            '--debug',
+            help='Set debug level. Default `W`.',
+            default='W',
+            choices=['D', 'I', 'W', 'E']
+            )
+        parser.add_argument(
+            '-f',
+            '--fromdate',
+            help='Read metric starting on this date.',
+            default='1970-01-01 00:00:00',
+            type=self.valid_date
+            )
+        parser.add_argument(
+            '-o',
+            '--outputpath',
+            help='Path to put output files. Default `./sarcharts`.',
+            default='./sarcharts'
+            )
+        parser.add_argument(
+            '-t',
+            '--todate',
+            help='Discard metrics after this date.',
+            default='2999-01-01 00:00:00',
+            type=self.valid_date
+            )
+        parser.add_argument(
+            'sarfilespaths',
+            help='`sa` file/s to parse. Default: `./sa??`.',
+            default=self.default_sarfiles(),
+            type=self.valid_path,
+            nargs='*'
+            )
+        self.args = parser.parse_args()
+
         # create required files on outputpath
-        self.C.outputpath = self.C.outputpath + "/sarcharts"
-        if os.path.exists(self.C.outputpath):
-            util.debug(self.C.debuglevel, 'E',
-                       f"Output path '{self.C.outputpath}' already exists.")
-            # shutil.rmtree(self.C.outputpath)
-        os.makedirs(self.C.outputpath + "/sar")
+        self.args.outputpath = self.args.outputpath + "/sarcharts"
+        if os.path.exists(self.args.outputpath):
+            util.debug(self.args.debug, 'E',
+                       f"Output path '{self.args.outputpath}' already exists.")
+            # shutil.rmtree(self.args.outputpath)
+        os.makedirs(self.args.outputpath + "/sar")
         shutil.copytree(os.path.dirname(
                         os.path.realpath(__file__)) + "/html",
-                        self.C.outputpath + "/html")
-
-    # pylint: disable=line-too-long
-    def show_help(self, errmsg=""):
-        print("Usage: sarcharts.py"
-              + " [Options] [sarfilespath] [sarfilespath] [sarfilespath]..."
-              "\n  Options:"
-              "\n    [-d|--debug]: Debug level [D,I,W,E]. Default Warning."
-              "\n    [-f|--from] DATE: From date (2023-12-01 23:01:00)."
-              "\n    [-h|--help]: Show help."
-              "\n    [-o|--outputpath] Path to put output files. Default is `./sarcharts`."  # noqa E501
-              "\n    [-t|--to] DATE: To date (2023-12-01 23:01:00)."
-              "\n  Arguments:"
-              "\n    [sarfilespath/s]: Multiple paths and patterns allowed. Default is `./sa??`."  # noqa E501
-              "\n"
-              "\n  Examples:"
-              "\n    - sarcharts.py /var/log/sa/sa*"
-              "\n    - sarcharts.py /tmp/previousmonth/sa?? sa08 sa09 sa1?")
-        if errmsg != "":
-            print("\nERROR: " + errmsg)
+                        self.args.outputpath + "/html")
 
     def main(self):
-        sarfiles = util.get_filelist(self.C.sarfilespaths)
-        util.debug(self.C.debuglevel, 'D', "sarfiles: " + str(sarfiles))
-        chartinfo = Sadf().sar_to_chartjs(
-            self.C.debuglevel, sarfiles, self.C.outputpath + "/sar",
-            self.C.charts, self.C.dfrom, self.C.dto
-            )
-        ChartJS().write_files(
-            self.C.charts, self.C.colors, chartinfo, self.C.outputpath
-            )
-        webbrowser.open(self.C.outputpath + "/cpu.html", 0, True)
+        if len(self.args.sarfilespaths) > 0:
+            sarfiles = util.get_filelist(self.args.sarfilespaths)
+            util.debug(self.args.debug, 'D', "sarfiles: " + str(sarfiles))
+            chartinfo = Sadf().sar_to_chartjs(
+                self.args.debug, sarfiles, self.args.outputpath + "/sar",
+                self.C.charts, self.args.fromdate, self.args.todate
+                )
+            ChartJS().write_files(
+                self.C.charts, self.C.colors, chartinfo, self.args.outputpath
+                )
+            webbrowser.open(self.args.outputpath + "/cpu.html", 0, True)
+        else:
+            util.debug(self.args.debug, 'E',
+                       "No valid `sa` files on provided path.")
 
 
 SarCharts().main()

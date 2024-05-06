@@ -60,6 +60,13 @@ def sortfiles_by_mtime(files):
     return list(dict(sorted(details.items())).values())
 
 
+def valid_date(s: str) -> datetime.datetime:
+    try:
+        return datetime.datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return False
+
+
 def is_valid_date(debuglevel, d):
     if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', d):
         return True

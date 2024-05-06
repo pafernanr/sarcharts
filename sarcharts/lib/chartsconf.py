@@ -1,9 +1,4 @@
-class ChartConf:
-    sarfilespaths = ["."]
-    outputpath = "."
-    debuglevel = "W"  # [D, I, W, E]
-    dfrom = False
-    dto = False
+class ChartsConf:
     charts = {
         "cpu": {
             "arg": "-P ALL",
