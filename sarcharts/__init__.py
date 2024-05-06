@@ -52,9 +52,9 @@ class SarCharts:
                        "'--to' used but no '--from' provided.")
         # get sarfilespaths
         if len(remainder) > 0:
-            self.sarfilespaths = []
+            self.C.sarfilespaths = []
             for path in remainder:
-                self.sarfilespaths.append(path)
+                self.C.sarfilespaths.append(path)
         # create required files on outputpath
         self.C.outputpath = self.C.outputpath + "/sarcharts"
         if os.path.exists(self.C.outputpath):
@@ -86,7 +86,7 @@ class SarCharts:
             print("\nERROR: " + errmsg)
 
     def main(self):
-        sarfiles = util.get_filelist(self.sarfilespaths)
+        sarfiles = util.get_filelist(self.C.sarfilespaths)
         util.debug(self.C.debuglevel, 'D', "sarfiles: " + str(sarfiles))
         chartinfo = Sadf().sar_to_chartjs(
             self.C.debuglevel, sarfiles, self.C.outputpath + "/sar",

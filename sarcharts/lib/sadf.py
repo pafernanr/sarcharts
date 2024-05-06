@@ -72,12 +72,6 @@ class Sadf:
                     # get first stats date
                     pos = f.tell()
                     line = f.readline().split(";")
-                    if chartinfo['hostname'] != "":
-                        util.debug(
-                            debuglevel, 'W',
-                            f"Found multiple hostnames '{chartinfo['hostname']}'"
-                            + f" and {line[0]} for {k}"
-                            )
                     chartinfo['hostname'] = line[0]
                     chartinfo['firstdate'] = line[2]
                     # seek file to first stats line
