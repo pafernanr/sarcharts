@@ -21,24 +21,24 @@ class SarCharts:
                                            ['debug=', 'from=', 'help',
                                             'outputpath=', 'to='])
         for opt, arg in options:
-            if opt == '-d' or opt == '--debug':
+            if opt in ['-d', '--debug']:
                 self.C.debuglevel = arg
-            elif opt == '-f' or opt == '--from':
+            elif opt in ['-f', '--from']:
                 if util.is_valid_date(self, arg):
                     self.C.dfrom = (
                         datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')
                     )
-            elif opt == '-h' or opt == '--help':
+            elif opt in ['-h', '--help']:
                 self.show_help()
-                exit()
-            elif opt == '-o' or opt == '--outputpath':
+                sys.exit()
+            elif opt in ['-o', '--outputpath']:
                 if not Path(arg).is_dir():
                     self.show_help("provided outputpath '"
                                    + self.C.outputpath
                                    + "' is not a folder or doesn't exists")
-                    exit(1)
+                    sys.exit(1)
                 self.C.outputpath = arg
-            elif opt == '-t' or opt == '--to':
+            elif opt in ['-t', '--to']:
                 if util.is_valid_date(self, arg):
                     self.C.dto = (
                         datetime.datetime.strptime(arg, '%Y-%m-%d %H:%M:%S')
