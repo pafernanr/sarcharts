@@ -52,7 +52,7 @@ class Sadf:
         # convert csv to chartjs compatible data Lists
         chartinfo = {
             "notavailable": '',
-            "hostnames": [],
+            "hostname": '',
             "firstdate": '',
             "lastdate": ''
             }
@@ -72,10 +72,13 @@ class Sadf:
                     # get first stats date
                     pos = f.tell()
                     line = f.readline().split(";")
+                    if chartinfo['hostname'] != "":
+                        util.debug(
+                            debuglevel, 'W',
+                            f"Found multiple hostnames '{chartinfo['hostname']}' and {line[0]} for {k}"
+                            )
+                    chartinfo['hostname'] = line[0]
                     chartinfo['firstdate'] = line[2]
-                    # get hostname
-                    if line[0] not in chartinfo['hostnames']:
-                        chartinfo['hostnames'].append(line[0])
                     # seek file to first stats line
                     f.seek(pos)
                     for line in f:
@@ -95,7 +98,7 @@ class Sadf:
                                 charts[k]['datasets'][item] = []
                                 for h in headers:
                                     charts[k]['datasets'][item].append({
-                                        "label": f"{fields[0]}_{h}",
+                                        "label": h,
                                         "values": []
                                         })
                             for i in range(len(fields[datastart:])):
@@ -106,5 +109,4 @@ class Sadf:
                                         })
                     if line != "":
                         chartinfo['lastdate'] = fields[2]
-        print(chartinfo['hostnames'])
         return chartinfo
