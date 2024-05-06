@@ -1,10 +1,11 @@
 import datetime
-import fnmatch
-import re
-from pathlib import Path
 import os
-import subprocess
+import re
 import sys
+
+import fnmatch
+from pathlib import Path
+import subprocess
 
 
 def debug(debuglevel, sev, msg):
