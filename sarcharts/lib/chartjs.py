@@ -13,7 +13,7 @@ class ChartJS:
                 "pages": charts.keys(),
                 "colors": colors,
                 "notavailable": chartinfo['notavailable'],
-                "hostnames": chartinfo['hostnames'],
+                "hostname": chartinfo['hostname'],
                 "firstdate": chartinfo['firstdate'],
                 "lastdate": chartinfo['lastdate']
                 }
