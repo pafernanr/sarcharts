@@ -64,6 +64,7 @@ class SarCharts:
                         os.path.realpath(__file__)) + "/html",
                         self.C.outputpath + "/html")
 
+    # pylint: disable=line-too-long
     def show_help(self, errmsg=""):
         print("Usage: sarcharts.py"
               + " [Options] [sarfilespath] [sarfilespath] [sarfilespath]..."
