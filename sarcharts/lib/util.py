@@ -60,19 +60,19 @@ def sortfiles_by_mtime(files):
     return list(dict(sorted(details.items())).values())
 
 
-def is_valid_date(Conf, d):
+def is_valid_date(debuglevel, d):
     if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', d):
         return True
     else:
-        debug(Conf, 'E', "ERROR: date '" + d
+        debug(debuglevel, 'E', "ERROR: date '" + d
               + "' doesn't match %Y-%m-%d %H:%M:%S")
 
 
-def in_date_range(Conf, d):
-    if is_valid_date(Conf, d):
+def in_date_range(debuglevel, dfrom, dto, d):
+    if is_valid_date(debuglevel, d):
         d = datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S')
-        if Conf.dfrom and Conf.dto:
-            if d >= Conf.dfrom and d <= Conf.dto:
+        if dfrom and dto:
+            if d >= dfrom and d <= dto:
                 return True
         else:
             return True
