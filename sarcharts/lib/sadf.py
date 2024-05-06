@@ -75,7 +75,8 @@ class Sadf:
                     if chartinfo['hostname'] != "":
                         util.debug(
                             debuglevel, 'W',
-                            f"Found multiple hostnames '{chartinfo['hostname']}' and {line[0]} for {k}"
+                            f"Found multiple hostnames '{chartinfo['hostname']}'"
+                            + f" and {line[0]} for {k}"
                             )
                     chartinfo['hostname'] = line[0]
                     chartinfo['firstdate'] = line[2]

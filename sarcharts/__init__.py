@@ -58,7 +58,9 @@ class SarCharts:
         # create required files on outputpath
         self.C.outputpath = self.C.outputpath + "/sarcharts"
         if os.path.exists(self.C.outputpath):
-            shutil.rmtree(self.C.outputpath)
+            util.debug(self.C.debuglevel, 'E',
+                       f"Output path '{self.C.outputpath}' already exists.")
+            # shutil.rmtree(self.C.outputpath)
         os.makedirs(self.C.outputpath + "/sar")
         shutil.copytree(os.path.dirname(
                         os.path.realpath(__file__)) + "/html",
