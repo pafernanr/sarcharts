@@ -318,7 +318,7 @@ class SarCharts:
                                    + self.outputpath
                                    + "' is not a folder or doesn't exists")
                     exit(1)
-                self.outputpath = str(arg + "/sarcharts")
+                self.outputpath = arg
             elif opt == '-t' or opt == '--to':
                 if util.is_valid_date(self, arg):
                     self.dto = (
@@ -337,6 +337,7 @@ class SarCharts:
             for path in remainder:
                 self.sarfilespaths.append(path)
         # create required files on outputpath
+        self.outputpath = self.outputpath + "/sarcharts"
         if os.path.exists(self.outputpath):
             shutil.rmtree(self.outputpath)
         os.makedirs(self.outputpath + "/sar")
