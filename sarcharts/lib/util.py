@@ -43,7 +43,7 @@ def get_filelist(filepaths):
         if Path(path).is_dir():
             for f in os.listdir(path):
                 if fnmatch.fnmatch(f, 'sa??'):
-                    files.append(path + str(f))
+                    files.append(f"{path}/{str(f)}")
         # path is a file
         elif Path(path).is_file():
             files.append(str(path))
