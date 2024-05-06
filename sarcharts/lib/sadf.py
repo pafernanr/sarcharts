@@ -6,6 +6,18 @@ from sarcharts.lib import util
 
 class Sadf:
 
+    def sar_to_csv(self, inputfile, arg, showheader, debuglevel):
+        command = f"sadf -dt {inputfile} -- {arg} {showheader}"
+        [stdout, stderr] = util.exec_command(debuglevel, command)
+        if "Try to convert it to current format" in stderr:
+            command = f"sadf -c {inputfile} > /tmp/sarcharts.tmp"
+            [stdout, stderr] = util.exec_command(debuglevel, command)
+            return self.sar_to_csv(
+                "/tmp/sarcharts.tmp", arg, showheader, debuglevel
+                )
+        else:
+            return [stdout, stderr]
+
     def merge_sarfiles(self, debuglevel, sarfiles, outputpath, charts):
         showheader = ""
         notavailable = []
@@ -13,8 +25,9 @@ class Sadf:
         for inputfile in sarfiles:
             for k, v in charts.items():
                 csvfile = f"{outputpath}/{k}.csv"
-                command = f"sadf -dt {inputfile} -- {v['arg']} {showheader}"
-                [stdout, stderr] = util.exec_command(debuglevel, command)
+                [stdout, stderr] = self.sar_to_csv(
+                    inputfile, v['arg'], showheader, debuglevel
+                    )
                 if stderr:
                     if "Requested activities not available" in stderr:
                         util.debug(debuglevel, 'I', stderr.strip())
@@ -81,15 +94,17 @@ class Sadf:
                             if item not in charts[k]['datasets'].keys():
                                 charts[k]['datasets'][item] = []
                                 for h in headers:
-                                    i = {"label": h, "values": []}
-                                    charts[k]['datasets'][item].append(i)
-
+                                    charts[k]['datasets'][item].append({
+                                        "label": f"{fields[0]}_{h}",
+                                        "values": []
+                                        })
                             for i in range(len(fields[datastart:])):
-                                value = (
-                                    {'x': fields[2], 'y': fields[i+datastart]}
-                                    )
                                 charts[k]['datasets'][
-                                    item][i]['values'].append(value)
+                                    item][i]['values'].append({
+                                        'x': fields[2],
+                                        'y': fields[i+datastart]
+                                        })
                     if line != "":
                         chartinfo['lastdate'] = fields[2]
+        print(chartinfo['hostnames'])
         return chartinfo

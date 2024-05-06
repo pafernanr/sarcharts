@@ -4,7 +4,6 @@ class ChartConf:
     debuglevel = "W"  # [D, I, W, E]
     dfrom = False
     dto = False
-    quiet = False
     charts = {
         "cpu": {
             "arg": "-P ALL",

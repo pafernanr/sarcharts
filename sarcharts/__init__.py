@@ -69,7 +69,7 @@ class SarCharts:
         print("Usage: sarcharts.py"
               + " [Options] [sarfilespath] [sarfilespath] [sarfilespath]..."
               "\n  Options:"
-              "\n    [-d|--debug]: Debug level [D,I,W,E]. Default Warning."  # noqa E501
+              "\n    [-d|--debug]: Debug level [D,I,W,E]. Default Warning."
               "\n    [-f|--from] DATE: From date (2023-12-01 23:01:00)."
               "\n    [-h|--help]: Show help."
               "\n    [-o|--outputpath] Path to put output files. Default is `./sarcharts`."  # noqa E501
