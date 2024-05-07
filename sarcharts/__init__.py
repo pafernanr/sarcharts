@@ -99,7 +99,8 @@ class SarCharts:
             ChartJS().write_files(
                 self.C.charts, self.C.colors, chartinfo, self.args.outputpath
                 )
-            util.debug(self.args.debug, '', "  Open SarCharts in default browser.")
+            util.debug(self.args.debug, '',
+                       "Open SarCharts in default browser.")
             webbrowser.open(self.args.outputpath + "/cpu.html", 0, True)
         else:
             util.debug(self.args.debug, 'E',
