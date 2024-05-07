@@ -59,7 +59,7 @@ class SarCharts:
             '-o',
             '--outputpath',
             help='Path to put output files. Default `./sarcharts`.',
-            default='./sarcharts'
+            default='.'
             )
         parser.add_argument(
             '-t',
@@ -89,6 +89,7 @@ class SarCharts:
                         self.args.outputpath + "/html")
 
     def main(self):
+        # import ipdb; ipdb.set_trace()
         if len(self.args.sarfilespaths) > 0:
             sarfiles = util.get_filelist(self.args.sarfilespaths)
             util.debug(self.args.debug, 'D', "sarfiles: " + str(sarfiles))
@@ -105,6 +106,3 @@ class SarCharts:
         else:
             util.debug(self.args.debug, 'E',
                        "No valid `sa` files on provided path.")
-
-
-SarCharts().main()
