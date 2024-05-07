@@ -1,5 +1,5 @@
 ### SarCharts
-SarCharts gets [sysstat](https://sysstat.github.io/) "sysstat" files from provided `sarfilespaths` and generates dynamic HTML Charts.
+SarCharts gets [sysstat](https://sysstat.github.io/) files from provided `sarfilespaths` and generates dynamic HTML Charts.
 
 ### Requirements
 `sadf` command is needed to read sar files. Hence [sysstat](https://sysstat.github.io/) package is required.
@@ -8,7 +8,7 @@ SarCharts gets [sysstat](https://sysstat.github.io/) "sysstat" files from provid
 ~~~
 usage: sarcharts.py [-h] [-d {D,I,W,E}] [-f FROMDATE] [-o OUTPUTPATH] [-t TODATE] [sarfilespaths ...]
 
-sarcharts usage
+SarCharts gets "sysstat" files from provided `sarfilespaths` and generates dynamic HTML Charts.
 
 positional arguments:
   sarfilespaths         `sa` file/s to parse. Default: `./sa??`.
