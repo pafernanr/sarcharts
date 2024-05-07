@@ -47,7 +47,7 @@ def get_filelist(filepaths):
         # path is a file
         elif Path(path).is_file():
             files.append(str(path))
-    return sortfiles_by_mtime(files)
+    return files
 
 
 def sortfiles_by_mtime(files):

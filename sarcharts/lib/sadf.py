@@ -6,63 +6,64 @@ from sarcharts.lib import util
 
 class Sadf:
 
-    def sar_to_csv(self, inputfile, arg, showheader, debuglevel):
-        command = f"sadf -dt {inputfile} -- {arg} {showheader}"
+    def sar_to_csv(self, inputfile, arg, debuglevel):
+        command = f"sadf -dt {inputfile} -- {arg}"
         [stdout, stderr] = util.exec_command(debuglevel, command)
-        if "Try to convert it to current format" in stderr:
-            command = f"sadf -c {inputfile} > /tmp/sarcharts.tmp"
-            [stdout, stderr] = util.exec_command(debuglevel, command)
-            return self.sar_to_csv(
-                "/tmp/sarcharts.tmp", arg, showheader, debuglevel
-                )
+        if stderr:
+            if "Try to convert it to current format" in stderr:
+                command = f"sadf -c {inputfile} > /tmp/sarcharts.tmp"
+                [stdout, stderr] = util.exec_command(debuglevel, command)
+                return self.sar_to_csv(
+                    "/tmp/sarcharts.tmp", arg, debuglevel
+                    )
+            elif "Requested activities not available" in stderr:
+                util.debug(debuglevel, 'I', stderr.strip())
+            else:
+                util.debug(debuglevel, 'W', stderr.strip())
         else:
-            return [stdout, stderr]
+            out = []
+            for line in stdout.split("\n"):
+                if line != "":
+                    out.append(line.split(";"))
+            return out
 
     def merge_sarfiles(self, debuglevel, sarfiles, outputpath, charts):
-        showheader = ""
-        notavailable = []
         util.debug(debuglevel, '', "Getting data from sar files.")
-        for inputfile in sarfiles:
-            for k, v in charts.items():
-                csvfile = f"{outputpath}/{k}.csv"
-                [stdout, stderr] = self.sar_to_csv(
-                    inputfile, v['arg'], showheader, debuglevel
-                    )
-                if stderr:
-                    if "Requested activities not available" in stderr:
-                        util.debug(debuglevel, 'I', stderr.strip())
-                        if k not in notavailable:
-                            notavailable.append(k)
-                    else:
-                        util.debug(debuglevel, 'W', stderr.strip())
-                else:
-                    util.debug(debuglevel, 'D', "Merge " + inputfile
-                               + " to " + csvfile)
-                    if os.path.exists(csvfile):
-                        with open(csvfile, "a") as myfile:
-                            myfile.write(stdout)
-                    else:
-                        with open(csvfile, "w") as myfile:
-                            myfile.write(stdout)
-            showheader = "| grep -vE '^#'"
-        return notavailable
+        for k, v in charts.items():
+            content = []
+            csvfile = f"{outputpath}/{k}.csv"
+            out = False
+            for inputfile in sarfiles:
+                out = self.sar_to_csv(inputfile, v['arg'], debuglevel)
+                if out:
+                    headers = out.pop(0)
+                    print(headers)
+                    util.debug(debuglevel, 'D',
+                               f"Merge {inputfile} to {csvfile}")
+                    content = content + out
+            if out:
+                with open(csvfile, "w") as f:
+                    f.write(';'.join(headers) + "\n")
+                    content.sort(key=lambda x: x[2])
+                    for line in content:
+                        f.write(';'.join(line) + "\n")
 
     def sar_to_chartjs(
             self, debuglevel, sarfiles, outputpath, charts, dfrom, dto):
         # convert csv to chartjs compatible data Lists
         chartinfo = {
-            "notavailable": '',
+            "notavailable": [],
             "hostname": '',
             "firstdate": '',
             "lastdate": ''
             }
-        chartinfo['notavailable'] = self.merge_sarfiles(
-            debuglevel, sarfiles, outputpath, charts
-            )
+        self.merge_sarfiles(debuglevel, sarfiles, outputpath, charts)
         util.debug(debuglevel, '', "Generating Charts.")
         for k, v in charts.items():
-            if k not in chartinfo['notavailable']:
-                csvfile = f"{outputpath}/{k}.csv"
+            csvfile = f"{outputpath}/{k}.csv"
+            if not os.path.exists(csvfile):
+                chartinfo['notavailable'].append(k)
+            else:
                 with open(csvfile) as f:
                     # set the first data field
                     datastart = 4 if charts[k]['multiple'] else 3
