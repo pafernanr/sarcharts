@@ -37,7 +37,6 @@ class Sadf:
                 out = self.sar_to_csv(inputfile, v['arg'], debuglevel)
                 if out:
                     headers = out.pop(0)
-                    print(headers)
                     util.debug(debuglevel, 'D',
                                f"Merge {inputfile} to {csvfile}")
                     content = content + out
