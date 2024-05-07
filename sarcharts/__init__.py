@@ -37,45 +37,45 @@ class SarCharts:
         return files
 
     def __init__(self):
-        parser = argparse.ArgumentParser(
+        self.parser = argparse.ArgumentParser(
             description="SarCharts gets \"sysstat\" files from provided"
             + " `sarfilespaths` and generates dynamic HTML Charts."
             )
-        parser.add_argument(
+        self.parser.add_argument(
             '-d',
             '--debug',
             help='Set debug level. Default `W`.',
             default='W',
             choices=['D', 'I', 'W', 'E']
             )
-        parser.add_argument(
+        self.parser.add_argument(
             '-f',
             '--fromdate',
             help='Read metric starting on this date.',
             default='1970-01-01 00:00:00',
             type=self.valid_date
             )
-        parser.add_argument(
+        self.parser.add_argument(
             '-o',
             '--outputpath',
             help='Path to put output files. Default `./sarcharts`.',
             default='.'
             )
-        parser.add_argument(
+        self.parser.add_argument(
             '-t',
             '--todate',
             help='Discard metrics after this date.',
             default='2099-01-01 00:00:00',
             type=self.valid_date
             )
-        parser.add_argument(
+        self.parser.add_argument(
             'sarfilespaths',
             help='`sa` file/s to parse. Default: `./sa??`.',
             default=self.default_sarfiles(),
             type=self.valid_path,
             nargs='*'
             )
-        self.args = parser.parse_args()
+        self.args = self.parser.parse_args()
 
         # create required files on outputpath
         self.args.outputpath = self.args.outputpath + "/sarcharts"
@@ -104,5 +104,6 @@ class SarCharts:
                        "Open SarCharts in default browser.")
             webbrowser.open(self.args.outputpath + "/cpu.html", 0, True)
         else:
+            self.parser.print_help()
             util.debug(self.args.debug, 'E',
                        "No valid `sa` files on provided path.")

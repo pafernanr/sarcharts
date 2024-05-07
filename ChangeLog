@@ -1,0 +1,54 @@
+CHANGES
+=======
+
+* package generation fixes
+* minor fixes
+* update README
+* Added ProgressBar and update README
+* sort data by field datetime instead of sa file mtime
+* sort data by field datetime instead of sa file mtime
+* use argparse instead of getopts
+* FIX: default paths
+* Exit if outputpath exists
+* Add multiple hostnames Warning
+* FIX: convert files from previous sar versions
+* Disable pylint for comment lines
+* pylint fixes
+* Add pylintrc file
+* code cleanup
+* update .gitignore
+* fix outpath declaration
+* pep8 fixes
+* Fix pep8 violations
+* data collection fixes
+* accept multiple input paths as arguments
+* add README.md
+* Adapt to pbr
+* Adapt to pbr
+* Adapt to pbr
+* preparing for wildcard fiole matching
+* update README
+* update README
+* remove sar binary
+* update screenshot
+* remove Charts title and move legend to top
+* performance improvements
+* update README
+* Chart Zoom added
+* code cleanup
+* update README
+* added all newtorking charts
+* CSS improvements
+* CSS improvements
+* added multiple charts for activities
+* fix relative/absolute sar files paths
+* modify charts hidden labels
+* --to --from Options error control
+* Added "--from DATE" and "--to DATE" Options
+* be a bit more pythonic
+* update README
+* added network chart
+* update README
+* update README
+* initial commit
+* Initial commit

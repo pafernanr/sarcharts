@@ -9,6 +9,14 @@ import subprocess
 
 
 def debug(debuglevel, sev, msg):
+    C = {
+        'I': '\033[0;34m',
+        'D': '\033[01;36m',
+        '': '\033[0;32m',
+        'W': '\033[93m',
+        'E': '\033[0;31m',
+        'RESET': '\033[0m'
+        }
     levels = {'D': 0,
               'I': 1,
               'W': 2,
@@ -18,7 +26,7 @@ def debug(debuglevel, sev, msg):
     if sev == "":
         print(f"  {str(msg)}")
     elif levels[sev] >= levels[debuglevel]:
-        print(f"[{sev}] {str(msg)}")
+        print(f"{C[sev]}[{sev}]{C['RESET']} {str(msg)}")
     if sev == 'E':
         sys.exit(1)
 
