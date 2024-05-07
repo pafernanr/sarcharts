@@ -16,7 +16,7 @@ def debug(debuglevel, sev, msg):
               '': 4
               }
     if sev == "":
-        print(f"{str(msg)}")
+        print(f"  {str(msg)}")
     elif levels[sev] >= levels[debuglevel]:
         print(f"[{sev}] {str(msg)}")
     if sev == 'E':
