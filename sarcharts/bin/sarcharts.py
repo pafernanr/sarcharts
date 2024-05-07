@@ -10,4 +10,4 @@ except KeyboardInterrupt:
 
 
 def main():
-    SarCharts()
+    SarCharts().main()
