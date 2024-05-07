@@ -1,6 +1,8 @@
+import datetime
 import os
 import re
 
+from sarcharts.lib.progressbar import ProgressBar
 from sarcharts.lib import util
 
 
@@ -11,6 +13,7 @@ class Sadf:
         [stdout, stderr] = util.exec_command(debuglevel, command)
         if stderr:
             if "Try to convert it to current format" in stderr:
+                # tf = tempfile.NamedTemporaryFile(prefix="sarcharts")
                 command = f"sadf -c {inputfile} > /tmp/sarcharts.tmp"
                 [stdout, stderr] = util.exec_command(debuglevel, command)
                 return self.sar_to_csv(
@@ -28,12 +31,18 @@ class Sadf:
             return out
 
     def merge_sarfiles(self, debuglevel, sarfiles, outputpath, charts):
-        util.debug(debuglevel, '', "Getting data from sar files.")
+        pb = ProgressBar()
+        pb.all_entries = len(charts) * len(sarfiles)
+        pb.start_time = datetime.datetime.now()
+        pbi = 0
         for k, v in charts.items():
             content = []
             csvfile = f"{outputpath}/{k}.csv"
             out = False
             for inputfile in sarfiles:
+                pbi += 1
+                pb.print_bar(
+                    pbi, f"Get data from {inputfile.split("/")[-1]} {k}.")
                 out = self.sar_to_csv(inputfile, v['arg'], debuglevel)
                 if out:
                     headers = out.pop(0)
@@ -46,19 +55,24 @@ class Sadf:
                     content.sort(key=lambda x: x[2])
                     for line in content:
                         f.write(';'.join(line) + "\n")
+        pb.finish("  Get data.")
 
     def sar_to_chartjs(
             self, debuglevel, sarfiles, outputpath, charts, dfrom, dto):
-        # convert csv to chartjs compatible data Lists
+        self.merge_sarfiles(debuglevel, sarfiles, outputpath, charts)
         chartinfo = {
             "notavailable": [],
             "hostname": '',
             "firstdate": '',
             "lastdate": ''
             }
-        self.merge_sarfiles(debuglevel, sarfiles, outputpath, charts)
-        util.debug(debuglevel, '', "Generating Charts.")
+        pb = ProgressBar()
+        pb.all_entries = len(charts)
+        pb.start_time = datetime.datetime.now()
+        pbi = 0
         for k, v in charts.items():
+            pbi += 1
+            pb.print_bar(pbi, f"Set data for {k} Chart.")
             csvfile = f"{outputpath}/{k}.csv"
             if not os.path.exists(csvfile):
                 chartinfo['notavailable'].append(k)
@@ -104,4 +118,5 @@ class Sadf:
                                         })
                     if line != "":
                         chartinfo['lastdate'] = fields[2]
+        pb.finish("  Set Data.")
         return chartinfo

@@ -37,7 +37,10 @@ class SarCharts:
         return files
 
     def __init__(self):
-        parser = argparse.ArgumentParser(description="sarcharts usage")
+        parser = argparse.ArgumentParser(
+            description="SarCharts gets \"sysstat\" files from provided"
+            + " `sarfilespaths` and generates dynamic HTML Charts."
+            )
         parser.add_argument(
             '-d',
             '--debug',
@@ -96,6 +99,7 @@ class SarCharts:
             ChartJS().write_files(
                 self.C.charts, self.C.colors, chartinfo, self.args.outputpath
                 )
+            util.debug(self.args.debug, '', "  Open SarCharts in default browser.")
             webbrowser.open(self.args.outputpath + "/cpu.html", 0, True)
         else:
             util.debug(self.args.debug, 'E',
