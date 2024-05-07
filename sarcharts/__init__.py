@@ -62,7 +62,7 @@ class SarCharts:
             '-t',
             '--todate',
             help='Discard metrics after this date.',
-            default='2999-01-01 00:00:00',
+            default='2099-01-01 00:00:00',
             type=self.valid_date
             )
         parser.add_argument(
