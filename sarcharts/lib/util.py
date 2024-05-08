@@ -76,16 +76,16 @@ def valid_date(s: str) -> datetime.datetime:
 
 
 def is_valid_date(debuglevel, d):
-    if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', d):
+    if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC', d):
         return True
     else:
         debug(debuglevel, 'E', "ERROR: date '" + d
-              + "' doesn't match %Y-%m-%d %H:%M:%S")
+              + "' doesn't match %Y-%m-%d %H:%M:%S UTC")
 
 
 def in_date_range(debuglevel, dfrom, dto, d):
     if is_valid_date(debuglevel, d):
-        d = datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S')
+        d = datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S UTC')
         if dfrom and dto:
             if d >= dfrom and d <= dto:
                 return True
