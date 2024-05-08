@@ -30,7 +30,7 @@ class Sadf:
                     out.append(line.split(";"))
             return out
 
-    def merge_sarfiles(self, debuglevel, sarfiles, outputpath, charts):
+    def merge_sarfiles(self, debuglevel, sarfiles, outputpath, charts, dfrom, dto):
         pb = ProgressBar()
         pb.all_entries = len(charts) * len(sarfiles)
         pb.start_time = datetime.datetime.now()
@@ -54,12 +54,15 @@ class Sadf:
                     f.write(';'.join(headers) + "\n")
                     content.sort(key=lambda x: x[2])
                     for line in content:
-                        f.write(';'.join(line) + "\n")
+                        if (line[2] != "timestamp" and util.in_date_range(
+                                debuglevel, dfrom, dto, line[2])):
+                            f.write(';'.join(line) + "\n")
         pb.finish("  Get data.")
 
     def sar_to_chartjs(
             self, debuglevel, sarfiles, outputpath, charts, dfrom, dto):
-        self.merge_sarfiles(debuglevel, sarfiles, outputpath, charts)
+        self.merge_sarfiles(
+            debuglevel, sarfiles, outputpath, charts, dfrom, dto)
         chartinfo = {
             "notavailable": [],
             "hostname": '',
@@ -94,28 +97,24 @@ class Sadf:
                         if "LINUX-RESTART" in line or re.match(r"^#", line):
                             continue
                         fields = line.strip().split(";")
-                        if util.in_date_range(
-                                debuglevel, dfrom, dto, fields[2]):
-                            # set fake item on non multiple charts
-                            item = (
-                                fields[3] if charts[k]['multiple'] else ""
-                                )
-                            # add date field to Chart labels
-                            if fields[2] not in charts[k]['labels']:
-                                charts[k]['labels'].append(fields[2])
-                            if item not in charts[k]['datasets'].keys():
-                                charts[k]['datasets'][item] = []
-                                for h in headers:
-                                    charts[k]['datasets'][item].append({
-                                        "label": h,
-                                        "values": []
-                                        })
-                            for i in range(len(fields[datastart:])):
-                                charts[k]['datasets'][
-                                    item][i]['values'].append({
-                                        'x': fields[2],
-                                        'y': fields[i+datastart]
-                                        })
+                        # set fake item on non multiple charts
+                        item = fields[3] if charts[k]['multiple'] else ""
+                        # add date field to Chart labels
+                        if fields[2] not in charts[k]['labels']:
+                            charts[k]['labels'].append(fields[2])
+                        if item not in charts[k]['datasets'].keys():
+                            charts[k]['datasets'][item] = []
+                            for h in headers:
+                                charts[k]['datasets'][item].append({
+                                    "label": h,
+                                    "values": []
+                                    })
+                        for i in range(len(fields[datastart:])):
+                            charts[k]['datasets'][
+                                item][i]['values'].append({
+                                    'x': fields[2],
+                                    'y': fields[i+datastart]
+                                    })
                     if line != "":
                         chartinfo['lastdate'] = fields[2]
         pb.finish("  Set Data.")
