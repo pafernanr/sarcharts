@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* Change package license and fix author lastname
 * cli enhacements
 * Create python-publish.yml
 * package generation fixes
