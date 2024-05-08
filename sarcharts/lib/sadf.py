@@ -42,7 +42,8 @@ class Sadf:
             for inputfile in sarfiles:
                 pbi += 1
                 pb.print_bar(
-                    pbi, f"Get data from {inputfile.split("/")[-1]} {k}.")
+                    pbi,
+                    "Get data from " + inputfile.split("/")[-1] + " " + k)
                 out = self.sar_to_csv(inputfile, v['arg'], debuglevel)
                 if out:
                     headers = out.pop(0)
