@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+* cli enhacements
+* Create python-publish.yml
 * package generation fixes
 * minor fixes
 * update README
