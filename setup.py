@@ -16,5 +16,8 @@
 import setuptools
 
 setuptools.setup(
+    version="0.0.2",
     setup_requires=['pbr>=2.0.0'],
+    long_description="SarCharts gets [sysstat](https://sysstat.github.io/) files from provided `sarfilespaths` and generates dynamic HTML Charts.",
+    long_description_content_type='text/markdown',
     pbr=True)
