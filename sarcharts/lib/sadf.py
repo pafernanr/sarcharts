@@ -9,7 +9,7 @@ from sarcharts.lib import util
 class Sadf:
 
     def sar_to_csv(self, inputfile, arg, debuglevel):
-        command = f"sadf -dt {inputfile} -- {arg}"
+        command = f"sadf -d {inputfile} -- {arg}"
         [stdout, stderr] = util.exec_command(debuglevel, command)
         if stderr:
             if "Try to convert it to current format" in stderr:
