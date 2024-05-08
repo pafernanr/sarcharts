@@ -44,13 +44,6 @@ class ChartsConf:
             "labels": [],
             "hidden": []
             },
-        "interrrupts": {
-            "arg": "-I",
-            "multiple": False,
-            "datasets": {},
-            "labels": [],
-            "hidden": []
-            },
         "load": {
             "arg": "-q LOAD",
             "multiple": False,
