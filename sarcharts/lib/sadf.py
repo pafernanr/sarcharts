@@ -22,6 +22,7 @@ class Sadf:
             elif "Requested activities not available" in stderr:
                 util.debug(debuglevel, 'I', stderr.strip())
             else:
+                util.debug(debuglevel, 'W', command)
                 util.debug(debuglevel, 'W', stderr.strip())
         else:
             out = []
