@@ -4,6 +4,9 @@ SarCharts gets [sysstat](https://sysstat.github.io/) files from provided `sarfil
 ### Requirements
 `sadf` command is needed to read sar files. Hence [sysstat](https://sysstat.github.io/) package is required.
 
+### Installation
+`pip install sarcharts`
+
 ### Usage
 ~~~
 usage: sarcharts.py [-h] [-d {D,I,W,E}] [-f FROMDATE] [-o OUTPUTPATH] [-t TODATE] [sarfilespaths ...]
