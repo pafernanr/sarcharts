@@ -17,11 +17,21 @@ class SarCharts:
     cwd = os.getcwd()
     C = ChartsConf()
 
-    def valid_date(self, date):
-        try:
-            return datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-        except ValueError:
-            raise argparse.ArgumentTypeError(f"not a valid date: {date!r}")
+    def valid_date(self, d):
+        valid = ["%Y-%m-%d %H:%M:%S",
+                 "%Y-%m-%d %H",
+                 "%Y-%m-%d %H:%M",
+                 "%Y-%m-%d"
+                 ]
+        format = "%Y-%m-%d %H:%M:%S"
+        for v in valid:
+            try:
+                o = datetime.datetime.strptime(d, v)
+                return datetime.datetime.strptime(str(o), format)
+            except ValueError:
+                pass
+        raise argparse.ArgumentTypeError(
+            f"not a valid date: {d!r}. Valid formats: {str(valid)}")
 
     def valid_path(self, path):
         if os.path.exists(path):

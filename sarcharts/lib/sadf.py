@@ -9,16 +9,14 @@ from sarcharts.lib import util
 class Sadf:
 
     def sar_to_csv(self, inputfile, arg, debuglevel):
-        command = f"sadf -d {inputfile} -- {arg}"
+        command = f"sadf -td {inputfile} -- {arg}"
         [stdout, stderr] = util.exec_command(debuglevel, command)
         if stderr:
             if "Try to convert it to current format" in stderr:
                 # tf = tempfile.NamedTemporaryFile(prefix="sarcharts")
                 command = f"sadf -c {inputfile} > /tmp/sarcharts.tmp"
                 [stdout, stderr] = util.exec_command(debuglevel, command)
-                return self.sar_to_csv(
-                    "/tmp/sarcharts.tmp", arg, debuglevel
-                    )
+                return self.sar_to_csv("/tmp/sarcharts.tmp", arg, debuglevel)
             elif "Requested activities not available" in stderr:
                 util.debug(debuglevel, 'I', stderr.strip())
             else:
@@ -28,10 +26,12 @@ class Sadf:
             out = []
             for line in stdout.split("\n"):
                 if line != "":
-                    out.append(line.split(";"))
+                    tmp = line.split(";")
+                    out.append(tmp)
             return out
 
-    def merge_sarfiles(self, debuglevel, sarfiles, outputpath, charts, dfrom, dto):
+    def merge_sarfiles(
+            self, debuglevel, sarfiles, outputpath, charts, dfrom, dto):
         pb = ProgressBar()
         pb.all_entries = len(charts) * len(sarfiles)
         pb.start_time = datetime.datetime.now()
@@ -56,8 +56,10 @@ class Sadf:
                     f.write(';'.join(headers) + "\n")
                     content.sort(key=lambda x: x[2])
                     for line in content:
-                        if (line[2] != "timestamp" and util.in_date_range(
-                                debuglevel, dfrom, dto, line[2])):
+                        if ("LINUX-RESTART" not in line[3]
+                                and line[2] != "timestamp"
+                                and util.in_date_range(
+                                    debuglevel, dfrom, dto, line[2])):
                             f.write(';'.join(line) + "\n")
         pb.finish("  Get data.")
 
@@ -96,8 +98,6 @@ class Sadf:
                     # seek file to first stats line
                     f.seek(pos)
                     for line in f:
-                        if "LINUX-RESTART" in line or re.match(r"^#", line):
-                            continue
                         fields = line.strip().split(";")
                         # set fake item on non multiple charts
                         item = fields[3] if charts[k]['multiple'] else ""

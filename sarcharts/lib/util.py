@@ -1,6 +1,5 @@
 import datetime
 import os
-import re
 import sys
 
 import fnmatch
@@ -68,26 +67,20 @@ def sortfiles_by_mtime(files):
     return list(dict(sorted(details.items())).values())
 
 
-def valid_date(s: str) -> datetime.datetime:
-    try:
-        return datetime.datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
-    except ValueError:
-        return False
-
-
-def is_valid_date(debuglevel, d):
-    if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC', d):
-        return True
-    else:
-        debug(debuglevel, 'E', "ERROR: date '" + d
-              + "' doesn't match %Y-%m-%d %H:%M:%S UTC")
+def valid_date(debuglevel, d):
+    formats = ["%Y-%m-%d %H:%M:%S %Z", "%Y-%m-%d %H:%M:%S"]
+    for format in formats:
+        try:
+            return datetime.datetime.strptime(d, format)
+        except ValueError:
+            pass
+    debug(debuglevel, 'E',
+          f"ERROR: date '{d}' doesn't match {str(formats)}.")
 
 
 def in_date_range(debuglevel, dfrom, dto, d):
-    if is_valid_date(debuglevel, d):
-        d = datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S UTC')
-        if dfrom and dto:
-            if d >= dfrom and d <= dto:
-                return True
-        else:
-            return True
+    d = valid_date(debuglevel, d)
+    if d >= dfrom and d <= dto:
+        return True
+    else:
+        return False
