@@ -7,7 +7,6 @@ import shutil
 import webbrowser
 
 from sarcharts.lib.chartjs import ChartJS
-from sarcharts.lib.chartsconf import ChartsConf
 from sarcharts.lib.sadf import Sadf
 from sarcharts.lib import util
 
@@ -15,7 +14,23 @@ from sarcharts.lib import util
 class SarCharts:
     args = ()
     cwd = os.getcwd()
-    C = ChartsConf()
+    colors = [
+        '255, 99, 132',
+        '255, 159, 64',
+        '255, 205, 86',
+        '75, 192, 192',
+        '54, 162, 235',
+        '153, 102, 255',
+        '201, 203, 207',
+        '153, 24, 44',
+        '54, 157, 72',
+        '75, 89, 123',
+        '255, 22, 237',
+        '99, 215, 99',
+        '199, 215, 29',
+        '68, 15, 229',
+        '88, 115, 67',
+        '149, 245, 44']
 
     def valid_date(self, d):
         valid = ["%Y-%m-%d %H:%M:%S",
@@ -79,6 +94,13 @@ class SarCharts:
             type=self.valid_date
             )
         self.parser.add_argument(
+            '-q',
+            '--quiet',
+            help="Don't show progress.",
+            default=False,
+            action='store_true'
+            )
+        self.parser.add_argument(
             'sarfilespaths',
             help='`sa` file/s to parse. Default: `./sa??`.',
             default=self.default_sarfiles(),
@@ -103,13 +125,11 @@ class SarCharts:
         if len(self.args.sarfilespaths) > 0:
             sarfiles = util.get_filelist(self.args.sarfilespaths)
             util.debug(self.args.debug, 'D', "sarfiles: " + str(sarfiles))
-            chartinfo = Sadf().sar_to_chartjs(
-                self.args.debug, sarfiles, self.args.outputpath + "/sar",
-                self.C.charts, self.args.fromdate, self.args.todate
+            charts = Sadf().sar_to_chartjs(
+                self.args.debug, self.args.quiet, sarfiles, self.args.outputpath + "/sar",
+                self.args.fromdate, self.args.todate
                 )
-            ChartJS().write_files(
-                self.C.charts, self.C.colors, chartinfo, self.args.outputpath
-                )
+            ChartJS().write_files(charts, self.colors, self.args.outputpath)
             util.debug(self.args.debug, '',
                        "Open SarCharts in default browser.")
             webbrowser.open(self.args.outputpath + "/cpu.html", 0, True)

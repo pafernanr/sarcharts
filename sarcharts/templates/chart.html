@@ -69,7 +69,7 @@ function showChart(name) {
 var myCharts = {
   {% for item, data in details['datasets'].items() %}
   '{{ item }}': {
-    'labels': {{ details['labels'] }},
+    'labels': {{ xlabels }},
     'datasets': [
     {% for i in range(data|length) %}
       {

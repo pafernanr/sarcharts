@@ -35,8 +35,8 @@ def exec_command(debuglevel, cmd):
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
-    stdout = str(stdout.decode("utf-8"))
-    stderr = str(stderr.decode("utf-8"))
+    stdout = str(stdout.decode(encoding="utf-8", errors="ignore"))
+    stderr = str(stderr.decode(encoding="utf-8", errors="ignore"))
     # if stderr != "":
     #    print(cmd + "\n" + stderr)
     #    sys.exit(1)

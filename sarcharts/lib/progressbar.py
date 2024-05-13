@@ -6,6 +6,7 @@ from datetime import datetime as mytime
 class ProgressBar:
     all_entries: int
     start_time: datetime
+    quiet = False
     last_printed_tenth_of_percentage: int
 
     def __init__(self) -> None:
@@ -27,6 +28,8 @@ class ProgressBar:
         self.start_time = mytime.now()
 
     def print_bar(self, done_lines: int, msg):
+        if not self.quiet:
+            return 0
         if self.all_entries == 0:
             return
         tenth_of_percentage = int(1000 * (done_lines / self.all_entries))

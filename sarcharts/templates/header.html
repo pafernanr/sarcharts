@@ -4,15 +4,11 @@
 <p><div class="menucontainer">
 <ul>
 {% for page in pages %}
-  {% if page in notavailable %}
-  <!--<li class="disabled">{{ page }}</li>-->
-  {% else %}
     {% if page == chart %}
-    <li class="active"><a href="{{ page }}.html">{{ page }}</a></li>
+    <li class="active"><a href="{{ hostname }}_{{ page }}.html">{{ page }}</a></li>
     {% else %}
-    <li class="inactive"><a href="{{ page }}.html">{{ page }}</a></li>
+    <li class="inactive"><a href="{{ hostname }}_{{ page }}.html">{{ page }}</a></li>
     {% endif %}
-  {% endif %}
 {% endfor %}
 </ul>
 </div></p>
