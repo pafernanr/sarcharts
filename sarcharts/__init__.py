@@ -14,23 +14,6 @@ from sarcharts.lib import util
 class SarCharts:
     args = ()
     cwd = os.getcwd()
-    colors = [
-        '255, 99, 132',
-        '255, 159, 64',
-        '255, 205, 86',
-        '75, 192, 192',
-        '54, 162, 235',
-        '153, 102, 255',
-        '201, 203, 207',
-        '153, 24, 44',
-        '54, 157, 72',
-        '75, 89, 123',
-        '255, 22, 237',
-        '99, 215, 99',
-        '199, 215, 29',
-        '68, 15, 229',
-        '88, 115, 67',
-        '149, 245, 44']
 
     def valid_date(self, d):
         valid = ["%Y-%m-%d %H:%M:%S",
@@ -76,8 +59,8 @@ class SarCharts:
         self.parser.add_argument(
             '-f',
             '--fromdate',
-            help='Read metric starting on this date.',
-            default='1970-01-01 00:00:00',
+            help='Include metrics from this date.',
+            default=datetime.datetime.strptime('1970-01-01', '%Y-%m-%d'),
             type=self.valid_date
             )
         self.parser.add_argument(
@@ -90,7 +73,7 @@ class SarCharts:
             '-t',
             '--todate',
             help='Discard metrics after this date.',
-            default='2099-01-01 00:00:00',
+            default=datetime.datetime.strptime('2039-01-01', '%Y-%m-%d'),
             type=self.valid_date
             )
         self.parser.add_argument(
@@ -112,7 +95,7 @@ class SarCharts:
         # create required files on outputpath
         self.args.outputpath = self.args.outputpath + "/sarcharts"
         if os.path.exists(self.args.outputpath):
-            util.debug(self.args.debug, 'E',
+            util.debug(self.args, 'E',
                        f"Output path '{self.args.outputpath}' already exists.")
             # shutil.rmtree(self.args.outputpath)
         os.makedirs(self.args.outputpath + "/sar")
@@ -124,16 +107,11 @@ class SarCharts:
         # import ipdb; ipdb.set_trace()
         if len(self.args.sarfilespaths) > 0:
             sarfiles = util.get_filelist(self.args.sarfilespaths)
-            util.debug(self.args.debug, 'D', "sarfiles: " + str(sarfiles))
-            charts = Sadf().sar_to_chartjs(
-                self.args.debug, self.args.quiet, sarfiles, self.args.outputpath + "/sar",
-                self.args.fromdate, self.args.todate
-                )
-            ChartJS().write_files(charts, self.colors, self.args.outputpath)
-            util.debug(self.args.debug, '',
-                       "Open SarCharts in default browser.")
-            webbrowser.open(self.args.outputpath + "/cpu.html", 0, True)
+            util.debug(self.args, 'D', "sarfiles: " + str(sarfiles))
+            charts = Sadf().sar_to_chartjs(self.args, sarfiles)
+            ChartJS().write_files(self.args, charts)
+            util.debug(self.args, '', "Open SarCharts in default browser.")
+            webbrowser.open(self.args.outputpath, 0, True)
         else:
             self.parser.print_help()
-            util.debug(self.args.debug, 'E',
-                       "No valid `sa` files on provided path.")
+            util.debug(self.args, 'E', "No valid `sa` files on provided path.")

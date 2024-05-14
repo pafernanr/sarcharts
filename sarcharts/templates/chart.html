@@ -5,15 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>sarcharts {{ hostname }}</title>
     <link rel="stylesheet" href="html/css/sarcharts.css" />
+    <link rel="stylesheet" href="html/css/ul-select.css" />
     <script src="html/js/jquery.js"></script>
     <script src="html/js/chart.umd.js"></script>
     <script src="html/js/hammer.min.js"></script>
     <script src="html/js/chartjs-plugin-zoom.min.js"></script>
+    <script src="html/js/ul-select.js"></script>
 
 </head>
 <body>
+<section class="container">
   {% include "header.html" %}
-  <div class="menucontainer">
+  <div class="activities">
     <ul>
   {% for item in details['datasets'].keys() %}
     {% if item != "" %}
@@ -22,6 +25,7 @@
   {% endfor %}
     </ul>
   </div>
+</section>
     <div class="chart">
       <canvas id="chartcanvas"></canvas>
     </div>
@@ -91,6 +95,18 @@ var myChart = new Chart(ctx);
 $(document).ready(function () {
   showChart($('.i_inactive').first().text());
   $('.i_inactive').first().attr("class", "i_active");
+
+  selhost="{{ hostname }}"
+  $('#hostlist').ulSelect(function(elem) {
+      selhost=$(elem).text()
+      window.location = selhost+"_cpu-load.html"
+  });
+  selchart="{{ chart }}"
+  $('#chartlist').ulSelect(function(elem) {
+      selchart=$(elem).text()
+      window.location = selhost+"_"+selchart+".html"
+  });
+
 });
 
 </script>

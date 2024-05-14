@@ -1,15 +1,31 @@
-<span class="header">
-<h1>{{ hostname }}</h1>
-<h3>{{ firstdate }} - {{ lastdate }}</h3>
-<p><div class="menucontainer">
-<ul>
-{% for page in pages %}
-    {% if page == chart %}
-    <li class="active"><a href="{{ hostname }}_{{ page }}.html">{{ page }}</a></li>
-    {% else %}
-    <li class="inactive"><a href="{{ hostname }}_{{ page }}.html">{{ page }}</a></li>
-    {% endif %}
-{% endfor %}
-</ul>
-</div></p>
-</span>
+    <div class="hostlist">
+        <ul id="hostlist">
+        {% for h in hostnames %}
+            {% if h == hostname %}
+                <li class="active">{{ h }}</li>
+            {% else %}
+                <li>{{ h }}</li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="chartlist">
+        <ul id="chartlist">
+            {% for page in pages %}
+                {% if page == chart %}
+                <li class="active">{{ page }}</li>
+                {% else %}
+                <li>{{ page }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="info">
+        <ul>
+            <li><b>release:</b> {{ release }}</li>
+            <li><b>machine:</b> {{ machine}}</li>
+            <li><b>cpunumber:</b> {{ numberofcpus }}</li>
+            <li><b>starttime:</b> {{ xlabels[0] }} {{ timezone }}</li>
+            <li><b>endtime:</b> {{ xlabels[-1] }} {{ timezone }}</li></h3>
+    </div>
+
