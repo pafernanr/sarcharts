@@ -77,10 +77,7 @@ def valid_date(args, d):
 
 def in_date_range(args, d):
     d = valid_date(args, d)
-    print(args.fromdate)
     if d >= args.fromdate and d <= args.todate:
-        print("si")
         return True
     else:
-        print("no")
         return False
