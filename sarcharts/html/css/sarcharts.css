@@ -1,16 +1,26 @@
   * {
     font-size: .98em;
   }
-  h1 {
-    font-size: 1.5em;
-  }
-  h3 {
-    color: #888;
-    font-size: 1em;
-  }
-  span.header { 
-    text-align: center 
-  }
+.container {  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+}
+.hostlist { grid-area: 1 / 1 / 2 / 2; 
+  justify-self: left; 
+  align-self: center; }
+.chartlist { grid-area: 1 / 2 / 2 / 3; 
+  justify-self: left; 
+  align-self: center; }
+.activities { grid-area: 2 / 1 / 3 / 4; 
+  justify-self: center; 
+  align-self: center; }
+.info { grid-area: 1 / 3 / 3 / 4; 
+  justify-self: center; 
+  align-self: center; 
+  text-wrap: nowrap;}
+
   a:link, a:visited,  a:active {
     color: #5685bc;
     text-decoration: none;
@@ -26,12 +36,11 @@
     border-radius: 10px;
     margin-bottom: 5px;
   }
-  div.menucontainer {
-    background-color:#ccc;
+  div.activities {
     display:inline;      
     text-align: center;
   }
-  div.menucontainer ul li {
+  div.activities ul li {
     display: inline;
     padding: 0.3em;
     border: 1px solid #ccc;    
@@ -57,4 +66,7 @@
   li.i_disabled {
     color: #ccc;
     background-color: #fff;
+  }
+  .zg-ul-select:not(.active)::after {
+    background-image: url('../img/chevron.svg');
   }

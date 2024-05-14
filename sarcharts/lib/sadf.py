@@ -1,6 +1,5 @@
 import datetime
-import os
-import re
+import json
 
 from sarcharts.lib.progressbar import ProgressBar
 from sarcharts.lib import util
@@ -8,116 +7,182 @@ from sarcharts.lib import util
 
 class Sadf:
 
-    def sar_to_csv(self, inputfile, arg, debuglevel):
-        command = f"sadf -td {inputfile} -- {arg}"
-        [stdout, stderr] = util.exec_command(debuglevel, command)
+    def sar_to_json(self, args, inputfile, arg,):
+        command = f"sadf -tj {inputfile} -- {arg}"
+        [stdout, stderr] = util.exec_command(args, command)
         if stderr:
             if "Try to convert it to current format" in stderr:
                 # tf = tempfile.NamedTemporaryFile(prefix="sarcharts")
                 command = f"sadf -c {inputfile} > /tmp/sarcharts.tmp"
-                [stdout, stderr] = util.exec_command(debuglevel, command)
-                return self.sar_to_csv("/tmp/sarcharts.tmp", arg, debuglevel)
+                [stdout, stderr] = util.exec_command(args, command)
+                return self.sar_to_json(args, "/tmp/sarcharts.tmp", arg)
             elif "Requested activities not available" in stderr:
-                util.debug(debuglevel, 'I', stderr.strip())
+                util.debug(args, 'I', stderr.strip())
             else:
-                util.debug(debuglevel, 'W', command)
-                util.debug(debuglevel, 'W', stderr.strip())
+                util.debug(args, 'W', command)
+                util.debug(args, 'W', stderr.strip())
         else:
-            out = []
-            for line in stdout.split("\n"):
-                if line != "":
-                    tmp = line.split(";")
-                    out.append(tmp)
-            return out
+            return json.loads(stdout)
 
-    def merge_sarfiles(
-            self, debuglevel, sarfiles, outputpath, charts, dfrom, dto):
-        pb = ProgressBar()
-        pb.all_entries = len(charts) * len(sarfiles)
-        pb.start_time = datetime.datetime.now()
-        pbi = 0
-        for k, v in charts.items():
-            content = []
-            csvfile = f"{outputpath}/{k}.csv"
-            out = False
-            for inputfile in sarfiles:
-                pbi += 1
-                pb.print_bar(
-                    pbi,
-                    "Get data from " + inputfile.split("/")[-1] + " " + k)
-                out = self.sar_to_csv(inputfile, v['arg'], debuglevel)
-                if out:
-                    headers = out.pop(0)
-                    util.debug(debuglevel, 'D',
-                               f"Merge {inputfile} to {csvfile}")
-                    content = content + out
-            if out:
-                with open(csvfile, "w") as f:
-                    f.write(';'.join(headers) + "\n")
-                    content.sort(key=lambda x: x[2])
-                    for line in content:
-                        if ("LINUX-RESTART" not in line[3]
-                                and line[2] != "timestamp"
-                                and util.in_date_range(
-                                    debuglevel, dfrom, dto, line[2])):
-                            f.write(';'.join(line) + "\n")
-        pb.finish("  Get data.")
-
-    def sar_to_chartjs(
-            self, debuglevel, sarfiles, outputpath, charts, dfrom, dto):
-        self.merge_sarfiles(
-            debuglevel, sarfiles, outputpath, charts, dfrom, dto)
-        chartinfo = {
-            "notavailable": [],
-            "hostname": '',
-            "firstdate": '',
-            "lastdate": ''
-            }
-        pb = ProgressBar()
-        pb.all_entries = len(charts)
-        pb.start_time = datetime.datetime.now()
-        pbi = 0
-        for k, v in charts.items():
-            pbi += 1
-            pb.print_bar(pbi, f"Set data for {k} Chart.")
-            csvfile = f"{outputpath}/{k}.csv"
-            if not os.path.exists(csvfile):
-                chartinfo['notavailable'].append(k)
+    def merge_sarfiles(self, args, sarfiles):
+        data = []
+        for inputfile in sarfiles:
+            jdata = self.sar_to_json(args, inputfile, '-A')
+            if jdata:
+                data.append(jdata)
             else:
+                util.debug(args, 'W', f"Can't add data from {inputfile}.")
+        return data
+
+    def sar_to_chartjs(self, args, sarfiles):
+        data = self.merge_sarfiles(args, sarfiles)
+        linehead = "# hostname;interval;timestamp"
+        pb = ProgressBar()
+        pb.quiet = args.quiet
+        all_entries = 0
+        for idata in range(len(data)):
+            for ihost in range(len(data[idata]['sysstat']['hosts'])):
+                for istats in range(len(data[idata]['sysstat'][
+                        'hosts'][ihost]['statistics'])):
+                    all_entries += len(data[idata]['sysstat']['hosts'][
+                        ihost]['statistics'][istats].keys())
+        pb.all_entries = all_entries
+
+        pb.start_time = datetime.datetime.now()
+        pbi = 0
+        charts = {}
+        for idata in range(len(data)):
+            hostsdata = data[idata]['sysstat']['hosts']
+            for ihost in range(len(hostsdata)):  # get timestamps for labels
+                hdata = hostsdata[ihost]
+                nodename = hdata['nodename']
+                if nodename not in charts.keys():
+                    charts[nodename] = {
+                        "sysname": hdata['sysname'],
+                        "release": hdata['release'],
+                        "machine": hdata['machine'],
+                        "number-of-cpus": hdata['number-of-cpus'],
+                        "timezone": hdata['timezone'],
+                        "xlabels": [],
+                        "activities": {}
+                        }
+                for istats in range(len(hdata['statistics'])):
+                    for act, adata in hdata['statistics'][istats].items():
+                        pbi += 1
+                        pb.print_bar(pbi, f"data {act}.")
+                        if act == "timestamp":
+                            date = f"{adata['date']} {adata['time']}"
+                            if (date not in charts[nodename]['xlabels']
+                                    and util.in_date_range(args, date)):
+                                charts[nodename]['xlabels'].append(date)
+                            linedet = f"{hdata['nodename']};{adata['interval']};{date}"
+                        else:
+                            if isinstance(adata, list):
+                                if act not in charts[nodename]['activities'].keys():
+                                    line = linehead
+                                    for h in adata[0].keys():
+                                        line += f";{str(h)}"
+                                    charts[nodename]['activities'][act] = {
+                                        "content": [line.split(";")],
+                                        "multiple": True
+                                        }
+                                for d in adata:
+                                    line = linedet
+                                    for v in d.values():
+                                        line += f";{str(v)}"
+                                    charts[nodename]['activities'][act][
+                                        'content'].append(line.split(";"))
+                            elif isinstance(adata, dict):
+                                d = adata[list(adata.keys())[0]]
+                                if isinstance(d, float) or isinstance(d, int):
+                                    if (act not in charts[nodename][
+                                            'activities'].keys()):
+                                        line = linehead
+                                        for h in adata.keys():
+                                            line += f";{str(h)}"
+                                        charts[nodename]['activities'][act] = {
+                                            "content": [line.split(";")],
+                                            "multiple": False
+                                            }
+                                    line = linedet
+                                    for v in adata.values():
+                                        line += f";{str(v)}"
+                                    charts[nodename]['activities'][act][
+                                        'content'].append(line.split(";"))
+                                else:
+                                    for subact, subdata in adata.items():
+                                        nact = f"{act}_{subact}"
+                                        if isinstance(subdata, list):
+                                            if (nact not in charts[nodename][
+                                                    'activities'].keys()):
+                                                line = linehead
+                                                for h in subdata[0].keys():
+                                                    line += f";{str(h)}"
+                                                charts[nodename]['activities'][nact] = {
+                                                    "content": [line.split(";")],
+                                                    "multiple": True
+                                                    }
+                                            for sv in subdata:
+                                                line = linedet
+                                                for v in sv.values():
+                                                    line += f";{str(v)}"
+                                                charts[nodename]['activities'][nact]['content'].append(line.split(";"))                                        
+                                        else:
+                                            if nact not in charts[nodename]['activities'].keys():
+                                                line = linehead
+                                                for h in subdata.keys():
+                                                    line += f";{str(h)}"
+                                                charts[nodename]['activities'][nact] = {
+                                                    "content": [line.split(";")],
+                                                    "multiple": False
+                                                    }
+                                            line = linedet
+                                            for v in subdata.values():
+                                                line += f";{str(v)}"
+                                            charts[nodename]['activities'][nact]['content'].append(line.split(";"))                                        
+
+        pb.finish("  Get data.")
+        # write csv files
+        for nodename, nodecharts in charts.items():
+            for activity, csvdata in charts[nodename]['activities'].items():
+                with open(f"{args.outputpath}/sar/{nodename}_{activity}.csv", "w") as f:
+                    f.write(";".join(csvdata['content'][0]) + "\n")
+                    csvdata['content'].pop(0)
+                    csvdata['content'].sort(key=lambda x: x[2])
+                    for line in csvdata['content']:
+                        if util.in_date_range(args, line[2]):
+                            f.write(";".join(line) + "\n")
+
+        # build the chartjs dict
+        for nodename, nodecharts in charts.items():
+            for activity, csvdata in nodecharts['activities'].items():
+                csvfile = f"{args.outputpath}/sar/{nodename}_{activity}.csv"
                 with open(csvfile) as f:
+                    charts[nodename]['activities'][activity]['datasets'] = {}
                     # set the first data field
-                    datastart = 4 if charts[k]['multiple'] else 3
+                    datastart = 4 if csvdata['multiple'] else 3
                     # get headers from first line
                     line = f.readline().strip()
                     headers = line.split(";")[datastart:]
                     # get first stats date
                     pos = f.tell()
                     line = f.readline().split(";")
-                    chartinfo['hostname'] = line[0]
-                    chartinfo['firstdate'] = line[2]
                     # seek file to first stats line
                     f.seek(pos)
                     for line in f:
                         fields = line.strip().split(";")
-                        # set fake item on non multiple charts
-                        item = fields[3] if charts[k]['multiple'] else ""
-                        # add date field to Chart labels
-                        if fields[2] not in charts[k]['labels']:
-                            charts[k]['labels'].append(fields[2])
-                        if item not in charts[k]['datasets'].keys():
-                            charts[k]['datasets'][item] = []
+                        # set fake item on non multiple nodecharts
+                        item = fields[3] if csvdata['multiple'] else ""
+                        if item not in charts[nodename]['activities'][activity]['datasets'].keys():
+                            charts[nodename]['activities'][activity]['datasets'][item] = []
                             for h in headers:
-                                charts[k]['datasets'][item].append({
+                                charts[nodename]['activities'][activity]['datasets'][item].append({
                                     "label": h,
                                     "values": []
                                     })
                         for i in range(len(fields[datastart:])):
-                            charts[k]['datasets'][
-                                item][i]['values'].append({
+                            charts[nodename]['activities'][activity]['datasets'][item][i]['values'].append({
                                     'x': fields[2],
                                     'y': fields[i+datastart]
                                     })
-                    if line != "":
-                        chartinfo['lastdate'] = fields[2]
-        pb.finish("  Set Data.")
-        return chartinfo
+        return charts

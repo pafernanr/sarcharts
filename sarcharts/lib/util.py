@@ -7,7 +7,7 @@ from pathlib import Path
 import subprocess
 
 
-def debug(debuglevel, sev, msg):
+def debug(args, sev, msg):
     C = {
         'I': '\033[0;34m',
         'D': '\033[01;36m',
@@ -24,19 +24,19 @@ def debug(debuglevel, sev, msg):
               }
     if sev == "":
         print(f"  {str(msg)}")
-    elif levels[sev] >= levels[debuglevel]:
+    elif levels[sev] >= levels[args.debug]:
         print(f"{C[sev]}[{sev}]{C['RESET']} {str(msg)}")
     if sev == 'E':
         sys.exit(1)
 
 
-def exec_command(debuglevel, cmd):
-    debug(debuglevel, "D", "execcommand: " + cmd)
+def exec_command(args, cmd):
+    debug(args, "D", "execcommand: " + cmd)
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
-    stdout = str(stdout.decode("utf-8"))
-    stderr = str(stderr.decode("utf-8"))
+    stdout = str(stdout.decode(encoding="utf-8", errors="ignore"))
+    stderr = str(stderr.decode(encoding="utf-8", errors="ignore"))
     # if stderr != "":
     #    print(cmd + "\n" + stderr)
     #    sys.exit(1)
@@ -67,20 +67,20 @@ def sortfiles_by_mtime(files):
     return list(dict(sorted(details.items())).values())
 
 
-def valid_date(debuglevel, d):
-    formats = ["%Y-%m-%d %H:%M:%S %Z", "%Y-%m-%d %H:%M:%S"]
-    for format in formats:
-        try:
-            return datetime.datetime.strptime(d, format)
-        except ValueError:
-            pass
-    debug(debuglevel, 'E',
-          f"ERROR: date '{d}' doesn't match {str(formats)}.")
+def valid_date(args, d):
+    format = "%Y-%m-%d %H:%M:%S"
+    try:
+        return datetime.datetime.strptime(d, format)
+    except ValueError:
+        debug(args, 'E', f"ERROR: date '{d}' doesn't match {format}.")
 
 
-def in_date_range(debuglevel, dfrom, dto, d):
-    d = valid_date(debuglevel, d)
-    if d >= dfrom and d <= dto:
+def in_date_range(args, d):
+    d = valid_date(args, d)
+    print(args.fromdate)
+    if d >= args.fromdate and d <= args.todate:
+        print("si")
         return True
     else:
+        print("no")
         return False
