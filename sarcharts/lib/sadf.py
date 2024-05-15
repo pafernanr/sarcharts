@@ -64,8 +64,15 @@ class Sadf:
                         "number-of-cpus": hdata['number-of-cpus'],
                         "timezone": hdata['timezone'],
                         "xlabels": [],
-                        "activities": {}
+                        "activities": {},
+                        "restarts": []
                         }
+                for istats in range(len(hdata['restarts'])):
+                    for r in hdata['restarts'][istats].values():
+                        date = f"{r['date']} {r['time']}"
+                        if util.in_date_range(args, date):
+                            charts[nodename]['restarts'].append(date)
+                            charts[nodename]['xlabels'].append(date)
                 for istats in range(len(hdata['statistics'])):
                     for act, adata in hdata['statistics'][istats].items():
                         pbi += 1
@@ -180,9 +187,9 @@ class Sadf:
                                     "label": h,
                                     "values": []
                                     })
-                        for i in range(len(fields[datastart:])):
-                            charts[nodename]['activities'][activity]['datasets'][item][i]['values'].append({
+                        for f in range(len(fields[datastart:])):
+                            charts[nodename]['activities'][activity]['datasets'][item][f]['values'].append({
                                     'x': fields[2],
-                                    'y': fields[i+datastart]
+                                    'y': fields[f+datastart]
                                     })
         return charts

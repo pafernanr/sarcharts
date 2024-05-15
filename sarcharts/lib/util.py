@@ -8,6 +8,8 @@ import subprocess
 
 
 def debug(args, sev, msg):
+    if args.quiet:
+        return
     C = {
         'I': '\033[0;34m',
         'D': '\033[01;36m',
