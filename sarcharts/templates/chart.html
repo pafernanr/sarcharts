@@ -12,6 +12,7 @@
     <script src="html/js/chart.umd.js"></script>
     <script src="html/js/chartjs-plugin-zoom.min.js"></script>
     <script src="html/js/chartjs-plugin-annotation.min.js"></script>
+    <script src="html/js/chartjs-adapter-date-fns.bundle.min.js"></script>
 
 </head>
 <body>
@@ -41,13 +42,25 @@ $('.i_inactive').click(function() {
 {% for i in range(restarts|length) %}
 const restart{{ i }} = {
   type: 'line',
+  enter: function({element}) {
+    element.label.options.color = 'rgba(255, 0, 0)',
+    element.label.options.font.size = 13;
+    element.label.options.content = 'restarted at {{ restarts[i] }}';
+    return true;
+  },
+  leave: function({element}) {
+    element.label.options.color = 'rgba(255, 0, 0, 0.4)',
+    element.label.options.font.size = 10;
+    element.label.options.content = 'restarted';
+    return true;
+  },
   borderColor: 'rgba(255, 0, 0, 0.4)',
   borderWidth: 1,
   display: (ctx) => ctx.chart.isDatasetVisible(1),
   label: {
     display: true,
-    content: 'restart',
     position: 'start',
+    content: 'restart',
     backgroundColor: 'transparent',
     opacity: 0,
     rotation: 90,
@@ -71,6 +84,31 @@ function showChart(name) {
     options: {
       maintainAspectRatio: false,
       responsive: true,
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            tooltipFormat: 'yyyy:LL:dd HH:mm:ss',
+            displayFormats: { // https://github.com/moment/luxon/blob/master/docs/formatting.md
+              'millisecond': 'yyyy:LL:dd HH:mm:ss SSS',
+              'second': 'yyyy:LL:dd HH:mm:ss',
+              'minute': 'yyyy:LL:dd HH:mm:ss',
+              'hour': 'yyyy:LL:dd HH:mm:ss',
+              'day': 'yyyy:LL:dd HH:mm:ss',
+              'week': 'yyyy:LL:dd HH:mm:ss',
+              'month': 'yyyy:LL:dd HH:mm:ss',
+              'quarter': 'yyyy LL:dd HH:mm:ss',
+              'year': 'yyyy:LL:dd HH:mm:ss'
+            }
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'value'
+          }
+        }
+      },
       plugins: {
         legend: {
           position: 'top'
@@ -83,6 +121,9 @@ function showChart(name) {
           }
         },
         zoom: {
+          limits: {
+            x: { min:'original', max:'original' }
+          },
           zoom: {
             drag: {
               enabled: true
@@ -104,7 +145,7 @@ function showChart(name) {
 var myCharts = {
   {% for item, data in details['datasets'].items() %}
   '{{ item }}': {
-    'labels': {{ xlabels }},
+    // 'labels': {{ xlabels }},
     'datasets': [
     {% for i in range(data|length) %}
       {
