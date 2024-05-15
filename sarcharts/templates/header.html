@@ -26,6 +26,11 @@
             <li><b>machine:</b> {{ machine}}</li>
             <li><b>cpunumber:</b> {{ numberofcpus }}</li>
             <li><b>starttime:</b> {{ xlabels[0] }} {{ timezone }}</li>
-            <li><b>endtime:</b> {{ xlabels[-1] }} {{ timezone }}</li></h3>
+            <li><b>endtime:</b> {{ xlabels[-1] }} {{ timezone }}</li>
+        </ul><!--
+        {% for r in restarts %}
+            <br> {{r}}
+        {% endfor %}
+        -->
     </div>
 

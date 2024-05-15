@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="html/css/sarcharts.css" />
     <link rel="stylesheet" href="html/css/ul-select.css" />
     <script src="html/js/jquery.js"></script>
-    <script src="html/js/chart.umd.js"></script>
     <script src="html/js/hammer.min.js"></script>
-    <script src="html/js/chartjs-plugin-zoom.min.js"></script>
     <script src="html/js/ul-select.js"></script>
+    <script src="html/js/chart.umd.js"></script>
+    <script src="html/js/chartjs-plugin-zoom.min.js"></script>
+    <script src="html/js/chartjs-plugin-annotation.min.js"></script>
 
 </head>
 <body>
@@ -36,6 +37,29 @@ $('.i_inactive').click(function() {
   showChart($(this).text());
 });
 
+
+{% for i in range(restarts|length) %}
+const restart{{ i }} = {
+  type: 'line',
+  borderColor: 'rgba(255, 0, 0, 0.4)',
+  borderWidth: 1,
+  display: (ctx) => ctx.chart.isDatasetVisible(1),
+  label: {
+    display: true,
+    content: 'restart',
+    position: 'start',
+    backgroundColor: 'transparent',
+    opacity: 0,
+    rotation: 90,
+    xAdjust: 5,
+    font: { size: 10 },
+    color: 'rgba(255, 0, 0, 0.4)'
+  },
+  scaleID: 'x',
+  value: '{{ restarts[i] }}'
+};
+{% endfor %}
+
 function showChart(name) {
   myChart.destroy();
   myChart = new Chart(ctx, {
@@ -50,6 +74,13 @@ function showChart(name) {
       plugins: {
         legend: {
           position: 'top'
+        },
+        annotation: {
+          annotations: {
+            {% for i in range(restarts|length) %}
+              restart{{ i }}{{ ", " if not loop.last else "" }}
+            {% endfor %}
+          }
         },
         zoom: {
           zoom: {
@@ -99,7 +130,7 @@ $(document).ready(function () {
   selhost="{{ hostname }}"
   $('#hostlist').ulSelect(function(elem) {
       selhost=$(elem).text()
-      window.location = selhost+"_cpu-load.html"
+      window.location = selhost+"_{{ pages[0] }}.html"
   });
   selchart="{{ chart }}"
   $('#chartlist').ulSelect(function(elem) {

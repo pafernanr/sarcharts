@@ -104,14 +104,16 @@ class SarCharts:
                         self.args.outputpath + "/html")
 
     def main(self):
-        # import ipdb; ipdb.set_trace()
         if len(self.args.sarfilespaths) > 0:
             sarfiles = util.get_filelist(self.args.sarfilespaths)
-            util.debug(self.args, 'D', "sarfiles: " + str(sarfiles))
-            charts = Sadf().sar_to_chartjs(self.args, sarfiles)
-            ChartJS().write_files(self.args, charts)
-            util.debug(self.args, '', "Open SarCharts in default browser.")
-            webbrowser.open(self.args.outputpath, 0, True)
-        else:
-            self.parser.print_help()
-            util.debug(self.args, 'E', "No valid `sa` files on provided path.")
+            if len(sarfiles) > 0:
+                util.debug(self.args, 'D', "sarfiles: " + str(sarfiles))
+                charts = Sadf().sar_to_chartjs(self.args, sarfiles)
+                ChartJS().write_files(self.args, charts)
+                util.debug(self.args, '', "Open SarCharts in default browser.")
+                webbrowser.open(self.args.outputpath, 0, True)
+            else:
+                self.parser.print_help()
+                util.debug(
+                    self.args, 'E',
+                    f"No valid `sa??` files in `{self.args.sarfilespaths}`.")
