@@ -19,8 +19,7 @@ class Sadf:
             elif "Requested activities not available" in stderr:
                 util.debug(args, 'I', stderr.strip())
             else:
-                util.debug(args, 'W', command)
-                util.debug(args, 'W', stderr.strip())
+                util.debug(args, 'W', f"{command}\n    {stderr.strip()}")
         else:
             return json.loads(stdout)
 

@@ -170,12 +170,14 @@ $(document).ready(function () {
 
   selhost="{{ hostname }}"
   $('#hostlist').ulSelect(function(elem) {
-      selhost=$(elem).text()
-      window.location = selhost+"_{{ pages[0] }}.html"
+    if (selhost != $(elem).text()) {
+      selhost=$(elem).text().replace(/\s+/g, "");
+      window.location = selhost+"_{{ pages[0] }}.html";
+    }
   });
   selchart="{{ chart }}"
   $('#chartlist').ulSelect(function(elem) {
-      selchart=$(elem).text()
+      selchart=$(elem).text().replace(/\s+/g, "");
       window.location = selhost+"_"+selchart+".html"
   });
 
