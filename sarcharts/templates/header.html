@@ -1,8 +1,22 @@
+    <div class="info">
+        <ul>
+            <li><b>Start:</b> {{ xlabels[0] }} {{ timezone }}</li>
+            <li><b>End:</b> {{ xlabels[-1] }} {{ timezone }}</li>
+            <li><b>Hostname:</b> {{ sysname }}</li>
+            <li><b>Release:</b> {{ release }}</li>
+            <li><b>Architecture:</b> {{ machine}}</li>
+            <li><b>CPU:</b> {{ numberofcpus }}</li>
+        </ul><!--
+        {% for r in restarts %}
+            <br> {{r}}
+        {% endfor %}
+        -->
+    </div>
     <div class="hostlist">
         <ul id="hostlist">
-        {% for h in hostnames %}
+        {% for h in hostnames|sort %}
             {% if h == hostname %}
-                <li class="active">{{ h }}</li>
+                <li class="active">{{ h }}&nbsp; &nbsp; &nbsp;</li>
             {% else %}
                 <li>{{ h }}</li>
             {% endif %}
@@ -13,24 +27,12 @@
         <ul id="chartlist">
             {% for page in pages %}
                 {% if page == chart %}
-                <li class="active">{{ page }}</li>
+                <li class="active"">{{ page }}&nbsp; &nbsp; &nbsp;</li>
                 {% else %}
                 <li>{{ page }}</li>
                 {% endif %}
             {% endfor %}
         </ul>
     </div>
-    <div class="info">
-        <ul>
-            <li><b>release:</b> {{ release }}</li>
-            <li><b>machine:</b> {{ machine}}</li>
-            <li><b>cpunumber:</b> {{ numberofcpus }}</li>
-            <li><b>starttime:</b> {{ xlabels[0] }} {{ timezone }}</li>
-            <li><b>endtime:</b> {{ xlabels[-1] }} {{ timezone }}</li>
-        </ul><!--
-        {% for r in restarts %}
-            <br> {{r}}
-        {% endfor %}
-        -->
-    </div>
+
 

@@ -1,25 +1,65 @@
   * {
-    font-size: .98em;
+    font-size: 1em;
   }
-.container {  display: grid;
-  grid-template-columns: 2fr 2fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 0px 0px;
-  grid-auto-flow: row;
-}
-.hostlist { grid-area: 1 / 1 / 2 / 2; 
-  justify-self: left; 
-  align-self: center; }
-.chartlist { grid-area: 1 / 2 / 2 / 3; 
-  justify-self: left; 
-  align-self: center; }
-.activities { grid-area: 2 / 1 / 3 / 4; 
-  justify-self: center; 
-  align-self: center; }
-.info { grid-area: 1 / 3 / 3 / 4; 
-  justify-self: center; 
-  align-self: center; 
-  text-wrap: nowrap;}
+  .container {  
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: min-content min-content min-content;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "info hostlist"
+      "info chartlist"
+      "info activities";
+    padding: 0.3em;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 5px;
+  }
+  
+  .info {
+    justify-self: center;
+    align-self: center;
+    grid-area: info;
+    width: min-content;
+    text-wrap: nowrap;
+    padding: 0em 1em;
+    }
+  
+  .hostlist { 
+    justify-self: left;
+    align-self: center;
+    grid-area: hostlist; }
+  
+  .chartlist { 
+    justify-self: left;
+    align-self: center;
+    grid-area: chartlist; }
+  
+  .activities { 
+    justify-self: left;
+    align-self: center;
+    grid-area: activities; }
+  
+ 
+  div.activities ul, div.info ul, div.hostlist ul, div.chartlist ul  {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+
+  div.activities ul {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.activities ul li {
+    display: inline;
+    padding: 0.3em;
+    border: 1px solid #ccc;    
+    border-radius: 5px;
+    margin-bottom: 5px;
+    margin-left: 0.2em;
+  }
 
   a:link, a:visited,  a:active {
     color: #5685bc;
@@ -34,17 +74,6 @@
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 10px;
-    margin-bottom: 5px;
-  }
-  div.activities {
-    display:inline;      
-    text-align: center;
-  }
-  div.activities ul li {
-    display: inline;
-    padding: 0.3em;
-    border: 1px solid #ccc;    
-    border-radius: 5px;
     margin-bottom: 5px;
   }
   li.active {

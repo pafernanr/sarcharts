@@ -1,15 +1,16 @@
 ul.zg-ul-select {
+  min-width: 20em;
+  width: max-content;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   cursor: pointer;
   margin: 0;
   padding: 0;
-  width: 15em;
   position:relative;
 }
 ul.zg-ul-select li {
-  font-size: 1.2em;
+  width: auto;
   font-weight: bold;
   display: none;
   padding: 3px 5px;
@@ -34,6 +35,7 @@ ul.zg-ul-select li.active {
   justify-content: space-between;
 }
 ul.zg-ul-select.active {
+  width: max-content;
   border: 1px solid #aaa;
   position: absolute;
   background-color:#FFF;
