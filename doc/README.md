@@ -9,23 +9,26 @@ SarCharts gets [sysstat](https://sysstat.github.io/) files from provided `sarfil
 
 ### Usage
 ~~~
-usage: sarcharts.py [-h] [-d {D,I,W,E}] [-f FROMDATE] [-o OUTPUTPATH] [-t TODATE] [sarfilespaths ...]
+usage: sarcharts [-h] [-d {D,I,W,E}] [-e EVENTFILE] [-f FROMDATE] [-o OUTPUTPATH] [-t TODATE] [-q] [sarfilespaths ...]
 
 SarCharts gets "sysstat" files from provided `sarfilespaths` and generates dynamic HTML Charts.
 
 positional arguments:
   sarfilespaths         `sa` file/s to parse. Default: `./sa??`.
 
-options:
+optional arguments:
   -h, --help            show this help message and exit
   -d {D,I,W,E}, --debug {D,I,W,E}
                         Set debug level. Default `W`.
+  -e EVENTFILE, --eventfile EVENTFILE
+                        Add events csv file. Header: # date;hostname;event_name;event_description
   -f FROMDATE, --fromdate FROMDATE
-                        Read metric starting on this date.
+                        Include metrics from this date.
   -o OUTPUTPATH, --outputpath OUTPUTPATH
                         Path to put output files. Default `./sarcharts`.
   -t TODATE, --todate TODATE
                         Discard metrics after this date.
+  -q, --quiet           Don't show progress.
 ~~~
 
 | Example Chart |
