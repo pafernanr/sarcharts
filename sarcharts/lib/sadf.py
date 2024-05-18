@@ -159,7 +159,9 @@ class Sadf:
         for nodename, nodecharts in charts.items():
             for activity, csvdata in charts[nodename]['activities'].items():
                 with open(f"{args.outputpath}/sar/{nodename}_{activity}.csv", "w") as f:
-                    f.write(";".join(csvdata['content'][0]) + "\n")
+                    # workaround for io.cs headers (maybe other activities)
+                    n = len(csvdata['content'][1])
+                    f.write(";".join(csvdata['content'][0][:n]) + "\n")
                     csvdata['content'].pop(0)
                     csvdata['content'].sort(key=lambda x: x[2])
                     for line in csvdata['content']:
@@ -193,7 +195,7 @@ class Sadf:
                                     "label": h,
                                     "values": []
                                     })
-                        
+
                         for f in range(len(fields[datastart:])):
                             charts[nodename]['activities'][activity]['datasets'][item][f]['values'].append({
                                     'x': fields[2],

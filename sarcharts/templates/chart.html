@@ -152,13 +152,15 @@ var myCharts = {
   '{{ item }}': {
     'datasets': [
     {% for i in range(data|length) %}
-      {
-      {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
-      label: '{{ data[i]['label'] }}',
-      data: {{ data[i]['values'] }},
-      borderColor: 'rgb({{ colors[i] }} 0.3)',
-      backgroundColor: 'rgb({{ colors[i] }})'
-      }{{ ", " if not loop.last else "" }}
+      {% if data[i]['values']|length > 0 %}
+        {
+        {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
+        label: '{{ data[i]['label'] }}',
+        data: {{ data[i]['values'] }},
+        borderColor: 'rgb({{ colors[i] }} 0.3)',
+        backgroundColor: 'rgb({{ colors[i] }})'
+        }{{ ", " if not loop.last else "" }}
+      {% endif %}
     {% endfor %}
     ]
   }{{ ", " if not loop.last else "" }}
