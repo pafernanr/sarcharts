@@ -33,6 +33,12 @@ class Sadf:
                 util.debug(args, 'W', f"Can't add data from {inputfile}.")
         return data
 
+    def data_normalization(self, act, data):
+        if isinstance(data, list) and isinstance(data[0], dict):
+            print(f"{act} is type 1")
+            headers = ";".join(data[0].keys())
+            print(headers)
+            
     def sar_to_chartjs(self, args, sarfiles):
         data = self.merge_sarfiles(args, sarfiles)
         linehead = "# hostname;interval;timestamp"
@@ -86,6 +92,7 @@ class Sadf:
                                 charts[nodename]['xlabels'].append(date)
                             linedet = f"{hdata['nodename']};{adata['interval']};{date}"
                         else:
+                            # self.data_normalization(act, adata)
                             if isinstance(adata, list):
                                 if act not in charts[nodename]['activities'].keys():
                                     line = linehead
