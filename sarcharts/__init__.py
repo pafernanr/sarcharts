@@ -60,8 +60,8 @@ class SarCharts:
         self.parser.add_argument(
             '-e',
             '--eventfile',
-            help='Add events csv file. csv format example: '
-                 + 'E.g: 2024-05-10T08:32:19+02:00;vpn;0,255,0;tun0 activated',
+            help='Add events csv file. Header: '
+                 + '# date;hostname;event_name;event_description',
             type=self.valid_path
             )
         self.parser.add_argument(
