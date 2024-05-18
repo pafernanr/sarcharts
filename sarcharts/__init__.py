@@ -7,6 +7,7 @@ import shutil
 import webbrowser
 
 from sarcharts.lib.chartjs import ChartJS
+from sarcharts.lib.events import Events
 from sarcharts.lib.sadf import Sadf
 from sarcharts.lib import util
 
@@ -55,6 +56,13 @@ class SarCharts:
             help='Set debug level. Default `W`.',
             default='W',
             choices=['D', 'I', 'W', 'E']
+            )
+        self.parser.add_argument(
+            '-e',
+            '--eventfile',
+            help='Add events csv file. csv format example: '
+                 + 'E.g: 2024-05-10T08:32:19+02:00;vpn;0,255,0;tun0 activated',
+            type=self.valid_path
             )
         self.parser.add_argument(
             '-f',
@@ -109,6 +117,7 @@ class SarCharts:
             if len(sarfiles) > 0:
                 util.debug(self.args, 'D', "sarfiles: " + str(sarfiles))
                 charts = Sadf().sar_to_chartjs(self.args, sarfiles)
+                charts = Events.getCSVdata(self.args, charts)
                 ChartJS().write_files(self.args, charts)
                 util.debug(self.args, '', "Open SarCharts in default browser.")
                 webbrowser.open(self.args.outputpath, 0, True)

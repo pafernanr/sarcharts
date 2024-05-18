@@ -28,6 +28,7 @@
     </ul>
   </div>
 </section>
+<div id="popup"></div>
     <div class="chart">
       <canvas id="chartcanvas"></canvas>
     </div>
@@ -37,40 +38,45 @@ $('.i_inactive').click(function() {
   $(this).attr("class","i_active");
   showChart($(this).text());
 });
-
-
-{% for i in range(restarts|length) %}
-const restart{{ i }} = {
-  type: 'line',
-  enter: function({element}) {
-    element.label.options.color = 'rgba(255, 0, 0)',
-    element.label.options.font.size = 13;
-    element.label.options.content = 'restarted at {{ restarts[i] }}';
-    return true;
-  },
-  leave: function({element}) {
-    element.label.options.color = 'rgba(255, 0, 0, 0.4)',
-    element.label.options.font.size = 10;
-    element.label.options.content = 'restarted';
-    return true;
-  },
-  borderColor: 'rgba(255, 0, 0, 0.4)',
-  borderWidth: 1,
-  display: (ctx) => ctx.chart.isDatasetVisible(1),
-  label: {
-    display: true,
-    position: 'start',
-    content: 'restart',
-    backgroundColor: 'transparent',
-    opacity: 0,
-    rotation: 90,
-    xAdjust: 5,
-    font: { size: 10 },
-    color: 'rgba(255, 0, 0, 0.4)'
-  },
-  scaleID: 'x',
-  value: '{{ restarts[i] }}'
-};
+{% for c in range(events|length) %}
+  {% set event = (events.keys()|list)[c] %}
+  {% for i in range(events[event]|length) %}
+  {% set eventdata = events[event][i] %}
+  const event{{ c }}_{{ i }} = {
+    type: 'line',
+    enter: function({element}) {
+      element.label.options.color = "rgba({{ colors[c] }})",
+      element.label.options.content = ["{{ event }}", "{{ eventdata['date'] }}"];
+      return true;
+    },
+    leave: function({element}) {
+      element.label.options.color = "rgba({{ colors[c] }}, 0.4)",
+      element.label.options.content = "{{ event }}";
+      return true;
+    },
+    click: function({element}) {
+      $("#popup").show();
+      $("#popup").text("{{ eventdata['text'] }}");
+    },
+    borderColor: "rgba({{ colors[c] }}, 0.4)",
+    borderWidth: 1,
+    display: (ctx) => ctx.chart.isDatasetVisible(1),
+    label: {
+      display: true,
+      position: 'start',
+      content: "{{ event }}",
+      backgroundColor: 'transparent',
+      opacity: 0,
+      rotation: 90,
+      xAdjust: 5,
+      yAdjust: 15,
+      font: { size: 11 },
+      color: 'rgba({{ colors[c] }}, 0.4)'
+    },
+    scaleID: 'x',
+    value: "{{ eventdata['date'] }}"
+  };
+  {% endfor %}
 {% endfor %}
 
 function showChart(name) {
@@ -104,7 +110,7 @@ function showChart(name) {
         },
         y: {
           title: {
-            display: true,
+            display: false,
             text: 'value'
           }
         }
@@ -113,11 +119,10 @@ function showChart(name) {
         legend: {
           position: 'top'
         },
-        annotation: {
-          annotations: {
-            {% for i in range(restarts|length) %}
-              restart{{ i }}{{ ", " if not loop.last else "" }}
-            {% endfor %}
+        annotation: { annotations: { 
+          {% for c in range(events|length) %}
+            {% set event = (events.keys()|list)[c] %}{% for i in range(events[event]|length) %}event{{c}}_{{i}},{% endfor %}
+          {% endfor %}
           }
         },
         zoom: {
@@ -145,7 +150,6 @@ function showChart(name) {
 var myCharts = {
   {% for item, data in details['datasets'].items() %}
   '{{ item }}': {
-    // 'labels': {{ xlabels }},
     'datasets': [
     {% for i in range(data|length) %}
       {
@@ -163,7 +167,8 @@ var myCharts = {
 
 var ctx = document.getElementById('chartcanvas').getContext('2d');
 var myChart = new Chart(ctx);
-
+var mousex = 0;
+var mousey = 0;
 $(document).ready(function () {
   showChart($('.i_inactive').first().text());
   $('.i_inactive').first().attr("class", "i_active");
@@ -180,7 +185,11 @@ $(document).ready(function () {
       selchart=$(elem).text().replace(/\s+/g, "");
       window.location = selhost+"_"+selchart+".html"
   });
-
+  $("body").on("click",function(e) {
+    if (!$(e.target).closest('#popup').length) {
+        $('#popup').hide();
+    }
+  });
 });
 
 </script>

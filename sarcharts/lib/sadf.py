@@ -64,14 +64,17 @@ class Sadf:
                         "timezone": hdata['timezone'],
                         "xlabels": [],
                         "activities": {},
-                        "restarts": []
+                        "events": {'Restart': []}
                         }
                 for istats in range(len(hdata['restarts'])):
                     for r in hdata['restarts'][istats].values():
                         date = f"{r['date']} {r['time']}"
                         if util.in_date_range(args, date):
-                            charts[nodename]['restarts'].append(date)
                             charts[nodename]['xlabels'].append(date)
+                            charts[nodename]['events']['Restart'].append(
+                                {'date': date,
+                                 'text': f'Restarted at {date}'
+                                 })
                 for istats in range(len(hdata['statistics'])):
                     for act, adata in hdata['statistics'][istats].items():
                         pbi += 1
@@ -99,53 +102,50 @@ class Sadf:
                                     charts[nodename]['activities'][act][
                                         'content'].append(line.split(";"))
                             elif isinstance(adata, dict):
-                                d = adata[list(adata.keys())[0]]
-                                if isinstance(d, float) or isinstance(d, int):
-                                    if (act not in charts[nodename][
-                                            'activities'].keys()):
-                                        line = linehead
-                                        for h in adata.keys():
-                                            line += f";{str(h)}"
-                                        charts[nodename]['activities'][act] = {
-                                            "content": [line.split(";")],
-                                            "multiple": False
-                                            }
-                                    line = linedet
-                                    for v in adata.values():
-                                        line += f";{str(v)}"
-                                    charts[nodename]['activities'][act][
-                                        'content'].append(line.split(";"))
-                                else:
-                                    for subact, subdata in adata.items():
-                                        nact = f"{act}_{subact}"
-                                        if isinstance(subdata, list):
-                                            if (nact not in charts[nodename][
-                                                    'activities'].keys()):
-                                                line = linehead
-                                                for h in subdata[0].keys():
-                                                    line += f";{str(h)}"
-                                                charts[nodename]['activities'][nact] = {
-                                                    "content": [line.split(";")],
-                                                    "multiple": True
-                                                    }
-                                            for sv in subdata:
-                                                line = linedet
-                                                for v in sv.values():
-                                                    line += f";{str(v)}"
-                                                charts[nodename]['activities'][nact]['content'].append(line.split(";"))                                        
-                                        else:
-                                            if nact not in charts[nodename]['activities'].keys():
-                                                line = linehead
-                                                for h in subdata.keys():
-                                                    line += f";{str(h)}"
-                                                charts[nodename]['activities'][nact] = {
-                                                    "content": [line.split(";")],
-                                                    "multiple": False
-                                                    }
+                                for subact, subdata in adata.items():
+                                    nact = f"{act}_{subact}"
+                                    if isinstance(subdata, float) or isinstance(subdata, int):
+                                        if (act not in charts[nodename][
+                                                'activities'].keys()):
+                                            line = linehead
+                                            for h in adata.keys():
+                                                line += f";{str(h)}"
+                                            charts[nodename]['activities'][act] = {
+                                                "content": [line.split(";")],
+                                                "multiple": False
+                                                }
+                                        line = linedet
+                                        line += f";{str(subdata)}"
+                                        charts[nodename]['activities'][act][
+                                            'content'].append(line.split(";"))
+                                    elif isinstance(subdata, list):
+                                        if (nact not in charts[nodename][
+                                                'activities'].keys()):
+                                            line = linehead
+                                            for h in subdata[0].keys():
+                                                line += f";{str(h)}"
+                                            charts[nodename]['activities'][nact] = {
+                                                "content": [line.split(";")],
+                                                "multiple": True
+                                                }
+                                        for sv in subdata:
                                             line = linedet
-                                            for v in subdata.values():
+                                            for v in sv.values():
                                                 line += f";{str(v)}"
                                             charts[nodename]['activities'][nact]['content'].append(line.split(";"))                                        
+                                    else:
+                                        if nact not in charts[nodename]['activities'].keys():
+                                            line = linehead
+                                            for h in subdata.keys():
+                                                line += f";{str(h)}"
+                                            charts[nodename]['activities'][nact] = {
+                                                "content": [line.split(";")],
+                                                "multiple": False
+                                                }
+                                        line = linedet
+                                        for v in subdata.values():
+                                            line += f";{str(v)}"
+                                        charts[nodename]['activities'][nact]['content'].append(line.split(";"))                                        
 
         pb.finish("  Get data.")
         # write csv files
@@ -186,6 +186,7 @@ class Sadf:
                                     "label": h,
                                     "values": []
                                     })
+                        
                         for f in range(len(fields[datastart:])):
                             charts[nodename]['activities'][activity]['datasets'][item][f]['values'].append({
                                     'x': fields[2],

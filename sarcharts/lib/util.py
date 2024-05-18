@@ -70,11 +70,22 @@ def sortfiles_by_mtime(files):
 
 
 def valid_date(args, d):
-    format = "%Y-%m-%d %H:%M:%S"
-    try:
-        return datetime.datetime.strptime(d, format)
-    except ValueError:
-        debug(args, 'E', f"ERROR: date '{d}' doesn't match {format}.")
+    outformat = "%Y-%m-%d %H:%M:%S"
+    # put sar 'sar' default format as first helps performance
+    valid = ["%Y-%m-%d %H:%M:%S",
+             "%Y-%m-%dT%H:%M:%S%z",
+             "%Y-%m-%dT%H:%M:%S",
+             "%Y-%m-%d %H",
+             "%Y-%m-%d %H:%M",
+             "%Y-%m-%d"
+             ]
+    for v in valid:
+        try:
+            o = datetime.datetime.strptime(d, v)
+            return datetime.datetime.strptime(str(o), outformat)
+        except ValueError:
+            pass
+    debug(args, 'E', f"not a valid date: {d!r}. Valid formats: {str(valid)}")
 
 
 def in_date_range(args, d):
