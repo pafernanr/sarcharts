@@ -60,7 +60,18 @@
     margin-bottom: 5px;
     margin-left: 0.2em;
   }
-
+  #popup {
+    display: none;
+    position: absolute;
+    min-width: 80%;
+    max-width: 80%;
+    margin: 0.7em;
+    padding: 0.3em;
+    background: #eee;
+    border: solid 1px #000;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
   a:link, a:visited,  a:active {
     color: #5685bc;
     text-decoration: none;

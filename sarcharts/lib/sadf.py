@@ -64,14 +64,17 @@ class Sadf:
                         "timezone": hdata['timezone'],
                         "xlabels": [],
                         "activities": {},
-                        "restarts": []
+                        "events": {'Restart': []}
                         }
                 for istats in range(len(hdata['restarts'])):
                     for r in hdata['restarts'][istats].values():
                         date = f"{r['date']} {r['time']}"
                         if util.in_date_range(args, date):
-                            charts[nodename]['restarts'].append(date)
                             charts[nodename]['xlabels'].append(date)
+                            charts[nodename]['events']['Restart'].append(
+                                {'date': date,
+                                 'text': f'Restarted at {date}'
+                                 })
                 for istats in range(len(hdata['statistics'])):
                     for act, adata in hdata['statistics'][istats].items():
                         pbi += 1

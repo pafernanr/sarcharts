@@ -49,7 +49,7 @@ class ChartJS:
                     "numberofcpus": nodecharts['number-of-cpus'],
                     "timezone": nodecharts['timezone'],
                     "details": csvdata,
-                    "restarts": nodecharts['restarts'],
+                    "events": nodecharts['events'],
                     "pages": sorted(nodecharts['activities'].keys()),
                     "colors": self.colors,
                     "hostname": nodename,
