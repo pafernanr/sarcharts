@@ -86,6 +86,7 @@ class Sadf:
                                 charts[nodename]['xlabels'].append(date)
                             linedet = f"{hdata['nodename']};{adata['interval']};{date}"
                         else:
+                            
                             if isinstance(adata, list):
                                 if act not in charts[nodename]['activities'].keys():
                                     line = linehead
