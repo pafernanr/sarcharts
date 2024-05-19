@@ -225,7 +225,7 @@ $('.i_inactive').click(function() {
     enter: function({element}) {
       $("#copyright").hide();
       $("#eventdescription").show();
-      $("#eventdescription").html(" Server Backup was started at this time.");
+      $("#eventdescription").html(" Server Backup was started at this time.<div id=eventdemo>\rEvents can use HTML tags. <font style=\"color: red\">Use it with caution!</font>\rCheck used CSV files here:<ul><li><a href='events.csv'>events.csv</a></li><li><a href='events.csv'>metrics.csv</a></li></ul></div>");
       $("#eventdescription").css("color", element.label.options.color);
       $("#eventname").show();
       $("#eventname").html("2024-05-14T13:24:43+02:00 :: Backup Started");
@@ -266,7 +266,7 @@ $('.i_inactive').click(function() {
     enter: function({element}) {
       $("#copyright").hide();
       $("#eventdescription").show();
-      $("#eventdescription").html("Out Of Memory detected.");
+      $("#eventdescription").html("Out Of Memory detected.<div id=eventdemo>\r\(Multiple <b>hostname</b>/s, <b>eventname</b>/s and <b>date formats</b> are supported on same CSV file:<ul><li>%Y-%m-%d %H:%M:%S</li><li>%Y-%m-%dT%H:%M:%S%z</li><li>%Y-%m-%dT%H:%M:%S</li><li>%Y-%m-%d %H:%M</li><li>%Y-%m-%d %H</li><li>%Y-%m-%d</li></ul>\rCheck used CSV files here:<ul><li><a href='events.csv'>events.csv</a></li><li><a href='events.csv'>metrics.csv</a></li></ul></div>");
       $("#eventdescription").css("color", element.label.options.color);
       $("#eventname").show();
       $("#eventname").html("2024-05-14 14:24:43 :: OOM");
@@ -307,7 +307,7 @@ $('.i_inactive').click(function() {
     enter: function({element}) {
       $("#copyright").hide();
       $("#eventdescription").show();
-      $("#eventdescription").html("Database connections is greater than 5000.");
+      $("#eventdescription").html("Database connections is greater than 5000.<div id=eventdemo>\rYou can also add additional metrics using <b>-m custommetrics.csv</b> parameter.\rCheck used CSV files here:<ul><li><a href='events.csv'>events.csv</a></li><li><a href='events.csv'>metrics.csv</a></li></ul></div>");
       $("#eventdescription").css("color", element.label.options.color);
       $("#eventname").show();
       $("#eventname").html("2024-05-14 19:00 :: DB Conn");
