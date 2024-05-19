@@ -28,9 +28,15 @@
     </ul>
   </div>
 </section>
-<div id="popup"></div>
     <div class="chart">
       <canvas id="chartcanvas"></canvas>
+    </div>
+    <div id="footer">
+      <div id="eventname"></div>
+      <div id="eventdescription"></div>
+      <div id="copyright">
+        <a href="https://github.com/pafernanr/sarcharts">© sarcharts</a>
+      </div>
     </div>
 <script>
 $('.i_inactive').click(function() {
@@ -45,19 +51,21 @@ $('.i_inactive').click(function() {
   const event{{ c }}_{{ i }} = {
     type: 'line',
     enter: function({element}) {
-      element.label.options.color = "rgba({{ colors[c] }})",
-      element.label.options.content = ["{{ event }}", "{{ eventdata['date'] }}"];
+      $("#copyright").hide();
+      $("#eventdescription").show();
+      $("#eventdescription").html("{{ eventdata['description'] }}");
+      $("#eventdescription").css("color", element.label.options.color);
+      $("#eventname").show();
+      $("#eventname").html("{{ eventdata['date'] }} :: {{ event }}");
+      // $("#eventname").css("border-color", element.label.options.color);
+      $("#eventname").css("color", element.label.options.color);
       return true;
     },
-    leave: function({element}) {
-      element.label.options.color = "rgba({{ colors[c] }}, 0.4)",
-      element.label.options.content = "{{ event }}";
-      return true;
-    },
-    click: function({element}) {
-      $("#popup").show();
-      $("#popup").text("{{ eventdata['text'] }}");
-    },
+    // leave: function({element}) {
+    //   $("#eventdescription").css("border-color", "#000");
+    //   $("#eventdescription").css("color", "#000");
+    //   return true;
+    // },
     borderColor: "rgba({{ colors[c] }}, 0.4)",
     borderWidth: 1,
     display: (ctx) => ctx.chart.isDatasetVisible(1),
@@ -71,7 +79,7 @@ $('.i_inactive').click(function() {
       xAdjust: 5,
       yAdjust: 15,
       font: { size: 11 },
-      color: 'rgba({{ colors[c] }}, 0.4)'
+      color: 'rgba({{ colors[c] }})'
     },
     scaleID: 'x',
     value: "{{ eventdata['date'] }}"
@@ -113,15 +121,21 @@ function showChart(name) {
         },
         y: {
           title: {
-            display: false,
-            text: 'value'
+            display: true,
+            text: '{{ chart }}'
           }
         },
+        {% if "yAxisID" in (details['datasets'].values()|list)[0][0] %}
         y1: {
-        type: 'linear',
-        display: true,
-        position: 'right'
+          title: {
+            display: true,
+            text: 'Additional Metrics'
+          },
+          type: 'linear',
+          display: true,
+          position: 'right'
         }
+        {% endif %}
       },
       plugins: {
         legend: {
@@ -165,10 +179,12 @@ var myCharts = {
         {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
         label: '{{ data[i]['label'] }}',
         yAxisID: '{{ data[i]['yAxisID']|default('y') }}',
-        type: '{{ data[i]['type']|default('bar') }}',
         data: {{ data[i]['values'] }},
         borderColor: 'rgb({{ colors[i] }})',
-        backgroundColor: 'rgb({{ colors[i] }})'
+        backgroundColor: 'rgb({{ colors[i] }}, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
         }{{ ", " if not loop.last else "" }}
       {% endif %}
     {% endfor %}
@@ -198,12 +214,17 @@ $(document).ready(function () {
       window.location = selhost+"_"+selchart+".html"
   });
   $("body").on("click",function(e) {
-    if (!$(e.target).closest('#popup').length) {
-        $('#popup').hide();
+    if (!$(e.target).closest('#eventdescription').length) {
+        $('#eventname').hide();
+        $('#eventdescription').hide();
+        $("#footer").css("border-color", "#000");
+        $("#footer").css("color", "#000");
+        $("#copyright").show();
     }
   });
 });
 
 </script>
+
 </body>
 </html>

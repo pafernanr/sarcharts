@@ -1,0 +1,4 @@
+# date;hostname;eventname;eventdescription
+2024-05-14T13:24:43+02:00;pablolaptop.pegaso.lan;Backup Started; Server Backup was started at this time.
+2024-05-14 14:24:43;pablolaptop.pegaso.lan;OOM;Out Of Memory detected.
+2024-05-14 19:00;pablolaptop.pegaso.lan;DB Conn;Database connections is greater than 5000.

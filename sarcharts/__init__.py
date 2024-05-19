@@ -18,16 +18,10 @@ class SarCharts:
     cwd = os.getcwd()
 
     def valid_date(self, d):
-        valid = ["%Y-%m-%d %H:%M:%S",
-                 "%Y-%m-%d %H",
-                 "%Y-%m-%d %H:%M",
-                 "%Y-%m-%d"
-                 ]
-        format = "%Y-%m-%d %H:%M:%S"
+        valid = util.valid_date_formats
         for v in valid:
             try:
-                o = datetime.datetime.strptime(d, v)
-                return datetime.datetime.strptime(str(o), format)
+                return datetime.datetime.strptime(d, v)
             except ValueError:
                 pass
         raise argparse.ArgumentTypeError(
@@ -62,7 +56,7 @@ class SarCharts:
             '-e',
             '--eventfile',
             help='Add events csv file. Header: '
-                 + '# date;hostname;event_name;event_description',
+                 + '# date;hostname;eventname;eventdescription',
             type=self.valid_path
             )
         self.parser.add_argument(
@@ -76,7 +70,7 @@ class SarCharts:
             '-m',
             '--metricfile',
             help='Add metrics csv file. Header: '
-                 + '# date;hostname;metric_name;metric_value',
+                 + '# date;hostname;metricname;metricvalue',
             type=self.valid_path
             )
         self.parser.add_argument(
@@ -125,8 +119,8 @@ class SarCharts:
             if len(sarfiles) > 0:
                 util.debug(self.args, 'D', "sarfiles: " + str(sarfiles))
                 charts = Sadf().sar_to_chartjs(self.args, sarfiles)
-                #charts = Events.getCSVdata(self.args, charts)
-                # charts = Metrics.getCSVdata(self.args, charts)
+                charts = Events.getCSVdata(self.args, charts)
+                charts = Metrics.getCSVdata(self.args, charts)
                 ChartJS().write_files(self.args, charts)
                 util.debug(self.args, '', "Open SarCharts in default browser.")
                 webbrowser.open(self.args.outputpath, 0, True)

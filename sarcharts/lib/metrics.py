@@ -8,7 +8,7 @@ class Metrics:
     def getCSVdata(args, charts):
         # date;hostname;metric_name;metric_value
         if args.metricfile:
-            values = []
+            metrics = {}
             with open(args.metricfile) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=';')
                 for row in csv_reader:
@@ -19,16 +19,20 @@ class Metrics:
                                 f"Host '{row[1]}' from '{args.metricfile}'"
                                 + " not in 'sar' data.")
                             continue
-                        charts[row[1]]['xlabels'].append(row[0])
-                        values.append({'x': row[0], 'y': row[3]})
+                        if util.in_date_range(args, row[0]):
+                            charts[row[1]]['xlabels'].append(row[0])
+                            if row[2] not in metrics.keys():
+                                metrics[row[2]] = [{'x': row[0], 'y': row[3]}]
+                            else:
+                                metrics[row[2]].append({'x': row[0], 'y': row[3]})
 
             for a in charts[row[1]]['activities']:
                 for d in charts[row[1]]['activities'][a]['datasets']:
-                    charts[row[1]]['activities'][a]['datasets'][d].append({
-                        "label": row[2],
-                        "yAxisID": 'y1',
-                        "type": 'line',
-                        "values": values
-                        })
+                    for metric, values in metrics.items():
+                        charts[row[1]]['activities'][a]['datasets'][d].insert(0, {
+                            "label": metric,
+                            "yAxisID": 'y1',
+                            "values": values
+                            })
 
         return charts

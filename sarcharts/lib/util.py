@@ -7,6 +7,18 @@ from pathlib import Path
 import subprocess
 
 
+# 'sar' default format on first place for performance
+valid_date_formats = ["%Y-%m-%d %H:%M:%S",
+                      "%Y-%m-%dT%H:%M:%S%z",
+                      "%Y-%m-%dT%H:%M:%S",
+                      "%Y-%m-%d %H:%M",
+                      "%Y-%m-%d %H",
+                      "%Y-%m-%d"
+                      # 14/May/2024:14:49:20 +0200 # apache
+                      # May 14 14:42:56 # messages
+                      ]
+
+
 def debug(args, sev, msg):
     if args.quiet:
         return
@@ -65,32 +77,24 @@ def sortfiles_by_mtime(files):
         mtime = os.path.getmtime(f)
         details[mtime] = f
     # 'sorted' returns a 'set' hence no duplicates
-    # but it should be converted to a list
+    # but it still needs to be converted to list
     return list(dict(sorted(details.items())).values())
 
 
 def valid_date(args, d):
-    outformat = "%Y-%m-%d %H:%M:%S"
-    # put sar 'sar' default format as first helps performance
-    valid = ["%Y-%m-%d %H:%M:%S",
-             "%Y-%m-%dT%H:%M:%S%z",
-             "%Y-%m-%dT%H:%M:%S",
-             "%Y-%m-%d %H",
-             "%Y-%m-%d %H:%M",
-             "%Y-%m-%d"
-             ]
+    valid = valid_date_formats
     for v in valid:
         try:
-            o = datetime.datetime.strptime(d, v)
-            return datetime.datetime.strptime(str(o), outformat)
+            return datetime.datetime.strptime(d, v)
         except ValueError:
-            pass
+            continue
     debug(args, 'E', f"not a valid date: {d!r}. Valid formats: {str(valid)}")
 
 
 def in_date_range(args, d):
-    d = valid_date(args, d)
-    if d >= args.fromdate and d <= args.todate:
+    d = valid_date(args, d).timestamp()
+    # use timestamps to avoid compare offset-naive and offset-aware datetimes
+    if d >= args.fromdate.timestamp() and d <= args.todate.timestamp():
         return True
     else:
         return False
