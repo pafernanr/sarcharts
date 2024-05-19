@@ -108,7 +108,7 @@ class SarCharts:
             util.debug(self.args, 'E',
                        f"Output path '{self.args.outputpath}' already exists.")
             # shutil.rmtree(self.args.outputpath)
-        os.makedirs(self.args.outputpath + "/sar")
+        os.makedirs(self.args.outputpath + "/csvfiles")
         shutil.copytree(os.path.dirname(
                         os.path.realpath(__file__)) + "/html",
                         self.args.outputpath + "/html")

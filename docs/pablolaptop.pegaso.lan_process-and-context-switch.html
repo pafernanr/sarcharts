@@ -166,7 +166,7 @@ $('.i_inactive').click(function() {
     enter: function({element}) {
       $("#copyright").hide();
       $("#eventdescription").show();
-      $("#eventdescription").html("Restart events are included in sar files.");
+      $("#eventdescription").html("Restart events are included in sar files. Check <b>sarcharts --help</b> to add your custom events and metrics.");
       $("#eventdescription").css("color", element.label.options.color);
       $("#eventname").show();
       $("#eventname").html("2024-05-14 18:44:22 :: Restart");
@@ -248,7 +248,7 @@ $('.i_inactive').click(function() {
     enter: function({element}) {
       $("#copyright").hide();
       $("#eventdescription").show();
-      $("#eventdescription").html("Out Of Memory detected.<div id=eventdemo>\r\(Multiple <b>hostname</b>/s, <b>eventname</b>/s and <b>date formats</b> are supported on same CSV file:<ul><li>%Y-%m-%d %H:%M:%S</li><li>%Y-%m-%dT%H:%M:%S%z</li><li>%Y-%m-%dT%H:%M:%S</li><li>%Y-%m-%d %H:%M</li><li>%Y-%m-%d %H</li><li>%Y-%m-%d</li></ul>\rCheck used CSV files here:<ul><li><a href='events.csv'>events.csv</a></li><li><a href='events.csv'>metrics.csv</a></li></ul></div>");
+      $("#eventdescription").html("Out Of Memory detected.<div id=eventdemo>\rMultiple <b>hostname</b>/s, <b>eventname</b>/s and <b>date formats</b> are supported on same CSV file:<ul><li>%Y-%m-%d %H:%M:%S</li><li>%Y-%m-%dT%H:%M:%S%z</li><li>%Y-%m-%dT%H:%M:%S</li><li>%Y-%m-%d %H:%M</li><li>%Y-%m-%d %H</li><li>%Y-%m-%d</li></ul>\rCheck used CSV files here:<ul><li><a href='events.csv'>events.csv</a></li><li><a href='events.csv'>metrics.csv</a></li></ul></div>");
       $("#eventdescription").css("color", element.label.options.color);
       $("#eventname").show();
       $("#eventname").html("2024-05-14 14:24:43 :: OOM");
