@@ -8,6 +8,7 @@ import webbrowser
 
 from sarcharts.lib.chartjs import ChartJS
 from sarcharts.lib.events import Events
+from sarcharts.lib.metrics import Metrics
 from sarcharts.lib.sadf import Sadf
 from sarcharts.lib import util
 
@@ -67,9 +68,16 @@ class SarCharts:
         self.parser.add_argument(
             '-f',
             '--fromdate',
-            help='Include metrics from this date.',
+            help='Include metrics/events from this date.',
             default=datetime.datetime.strptime('1970-01-01', '%Y-%m-%d'),
             type=self.valid_date
+            )
+        self.parser.add_argument(
+            '-m',
+            '--metricfile',
+            help='Add metrics csv file. Header: '
+                 + '# date;hostname;metric_name;metric_value',
+            type=self.valid_path
             )
         self.parser.add_argument(
             '-o',
@@ -80,7 +88,7 @@ class SarCharts:
         self.parser.add_argument(
             '-t',
             '--todate',
-            help='Discard metrics after this date.',
+            help='Include metrics/events before this date.',
             default=datetime.datetime.strptime('2039-01-01', '%Y-%m-%d'),
             type=self.valid_date
             )
@@ -117,7 +125,8 @@ class SarCharts:
             if len(sarfiles) > 0:
                 util.debug(self.args, 'D', "sarfiles: " + str(sarfiles))
                 charts = Sadf().sar_to_chartjs(self.args, sarfiles)
-                charts = Events.getCSVdata(self.args, charts)
+                #charts = Events.getCSVdata(self.args, charts)
+                # charts = Metrics.getCSVdata(self.args, charts)
                 ChartJS().write_files(self.args, charts)
                 util.debug(self.args, '', "Open SarCharts in default browser.")
                 webbrowser.open(self.args.outputpath, 0, True)

@@ -106,6 +106,9 @@ function showChart(name) {
               'quarter': 'yyyy LL:dd HH:mm:ss',
               'year': 'yyyy:LL:dd HH:mm:ss'
             }
+          },
+          ticks: {
+            source: 'auto'
           }
         },
         y: {
@@ -113,6 +116,11 @@ function showChart(name) {
             display: false,
             text: 'value'
           }
+        },
+        y1: {
+        type: 'linear',
+        display: true,
+        position: 'right'
         }
       },
       plugins: {
@@ -152,13 +160,17 @@ var myCharts = {
   '{{ item }}': {
     'datasets': [
     {% for i in range(data|length) %}
-      {
-      {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
-      label: '{{ data[i]['label'] }}',
-      data: {{ data[i]['values'] }},
-      borderColor: 'rgb({{ colors[i] }} 0.3)',
-      backgroundColor: 'rgb({{ colors[i] }})'
-      }{{ ", " if not loop.last else "" }}
+      {% if data[i]['values']|length > 0 %}
+        {
+        {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
+        label: '{{ data[i]['label'] }}',
+        yAxisID: '{{ data[i]['yAxisID']|default('y') }}',
+        type: '{{ data[i]['type']|default('bar') }}',
+        data: {{ data[i]['values'] }},
+        borderColor: 'rgb({{ colors[i] }})',
+        backgroundColor: 'rgb({{ colors[i] }})'
+        }{{ ", " if not loop.last else "" }}
+      {% endif %}
     {% endfor %}
     ]
   }{{ ", " if not loop.last else "" }}
