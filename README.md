@@ -1,6 +1,8 @@
 ### SarCharts
 SarCharts gets [sysstat](https://sysstat.github.io/) files from provided `sarfilespaths` and generates dynamic HTML Charts.
 
+**[Live Demo](https://pafernanr.github.io/sarcharts/)**
+
 ### Requirements
 `sadf` command is needed to read sar files. Hence [sysstat](https://sysstat.github.io/) package is required.
 
