@@ -21,11 +21,11 @@ optional arguments:
   -d {D,I,W,E}, --debug {D,I,W,E}
                         Set debug level. Default `W`.
   -e EVENTFILE, --eventfile EVENTFILE
-                        Add events csv file. Header: # date;hostname;event_name;event_description
+                        Add events csv file. Header: # date;hostname;eventname;eventdescription
   -f FROMDATE, --fromdate FROMDATE
                         Include metrics/events from this date.
   -m METRICFILE, --metricfile METRICFILE
-                        Add metrics csv file. Header: # date;hostname;metric_name;metric_value
+                        Add metrics csv file. Header: # date;hostname;metricname;metricvalue
   -o OUTPUTPATH, --outputpath OUTPUTPATH
                         Path to put output files. Default `./sarcharts`.
   -t TODATE, --todate TODATE

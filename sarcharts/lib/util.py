@@ -10,9 +10,12 @@ import subprocess
 # 'sar' default format on first place for performance
 valid_date_formats = ["%Y-%m-%d %H:%M:%S",
                       "%Y-%m-%dT%H:%M:%S%z",
+                      "%Y-%m-%dT%H:%M:%S",
                       "%Y-%m-%d %H:%M",
                       "%Y-%m-%d %H",
                       "%Y-%m-%d"
+                      # 14/May/2024:14:49:20 +0200 # apache
+                      # May 14 14:42:56 # messages
                       ]
 
 

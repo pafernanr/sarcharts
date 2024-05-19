@@ -56,7 +56,7 @@ class SarCharts:
             '-e',
             '--eventfile',
             help='Add events csv file. Header: '
-                 + '# date;hostname;event_name;event_description',
+                 + '# date;hostname;eventname;eventdescription',
             type=self.valid_path
             )
         self.parser.add_argument(
@@ -70,7 +70,7 @@ class SarCharts:
             '-m',
             '--metricfile',
             help='Add metrics csv file. Header: '
-                 + '# date;hostname;metric_name;metric_value',
+                 + '# date;hostname;metricname;metricvalue',
             type=self.valid_path
             )
         self.parser.add_argument(

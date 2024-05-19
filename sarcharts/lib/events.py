@@ -22,6 +22,12 @@ class Events:
                             if row[2] not in charts[row[1]]['events']:
                                 charts[row[1]]['events'][row[2]] = []
                             charts[row[1]]['events'][row[2]].append(
-                                   {'date': row[0], 'text': row[3]})
+                                   {'date': row[0],
+                                    'description': (
+                                        row[3]
+                                        .replace(r'"', r'\"')
+                                        .replace(r'(', r'\(')
+                                        .replace(r')', r'\)'))
+                                    })
 
         return charts

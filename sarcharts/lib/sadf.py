@@ -79,7 +79,7 @@ class Sadf:
                             charts[nodename]['xlabels'].append(date)
                             charts[nodename]['events']['Restart'].append(
                                 {'date': date,
-                                 'text': f'Restarted at {date}'
+                                 'description': f'Restart events are included in sar files.'
                                  })
                 for istats in range(len(hdata['statistics'])):
                     for act, adata in hdata['statistics'][istats].items():
@@ -87,11 +87,15 @@ class Sadf:
                         pb.print_bar(pbi, f"data {act}.")
                         if act == "timestamp":
                             date = f"{adata['date']} {adata['time']}"
+                            if not util.in_date_range(args, date):
+                                continue
                             if (date not in charts[nodename]['xlabels']
                                     and util.in_date_range(args, date)):
                                 charts[nodename]['xlabels'].append(date)
                             linedet = f"{hdata['nodename']};{adata['interval']};{date}"
                         else:
+                            if not util.in_date_range(args, date):
+                                continue
                             if isinstance(adata, list):
                                 if act not in charts[nodename]['activities'].keys():
                                     line = linehead
@@ -173,14 +177,13 @@ class Sadf:
         for nodename, nodecharts in charts.items():
             for activity, csvdata in charts[nodename]['activities'].items():
                 with open(f"{args.outputpath}/sar/{nodename}_{activity}.csv", "w") as f:
-                    # workaround for io.cs headers (maybe other activities)
+                    # workaround for io.cs headers (and maybe other activities)
                     n = len(csvdata['content'][1])
                     f.write(";".join(csvdata['content'][0][:n]) + "\n")
                     csvdata['content'].pop(0)
                     csvdata['content'].sort(key=lambda x: x[2])
                     for line in csvdata['content']:
-                        if util.in_date_range(args, line[2]):
-                            f.write(";".join(line) + "\n")
+                        f.write(";".join(line) + "\n")
 
         # build the chartjs dict
         for nodename, nodecharts in charts.items():

@@ -1,0 +1,95 @@
+ul.zg-ul-select {
+  min-width: 20em;
+  width: max-content;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  position:relative;
+}
+ul.zg-ul-select li {
+  width: auto;
+  font-weight: bold;
+  display: none;
+  padding: 3px 5px;
+}
+ul.zg-ul-select:not(.active) b { 
+  font-weight:normal; 
+}
+ul.zg-ul-select li.active {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border: 1px solid #aaa;
+  color: #111;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+ul.zg-ul-select.active {
+  width: max-content;
+  border: 1px solid #aaa;
+  position: absolute;
+  background-color:#FFF;
+  z-index:1;
+}
+ul.zg-ul-select.active li {
+  border: none;
+  display: block;
+}
+ul.zg-ul-select.active li:hover {
+  background-color: #0074d9;
+  color:#FFF;
+}
+ul.zg-ul-select.active li.active {
+  background-color: #c4e0f9;
+}
+ul.zg-ul-select.active li.active:hover {
+  background-color: #0074d9;
+  color:#FFF;
+}
+
+.selected--zg-ul-select {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #111;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  width: auto;
+}
+.selected--zg-ul-select.active {
+  border: 1px solid #111;
+  padding: 3px 5px;
+}
+.zg-ul-select:not(.active)::after {
+  content: ' ';
+  position: absolute;
+  right: 7px;
+  top: 3px;
+  background-image: url('../img/chevron.svg'); /* change path to chevron here, if needed */
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  pointer-events: none;
+}
+.selected--zg-ul-select.active .description { display:none }
+.zg-ul-select:not(.active) li.active .description { display:none }
