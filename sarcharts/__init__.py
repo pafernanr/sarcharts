@@ -18,16 +18,10 @@ class SarCharts:
     cwd = os.getcwd()
 
     def valid_date(self, d):
-        valid = ["%Y-%m-%d %H:%M:%S",
-                 "%Y-%m-%d %H",
-                 "%Y-%m-%d %H:%M",
-                 "%Y-%m-%d"
-                 ]
-        format = "%Y-%m-%d %H:%M:%S"
+        valid = util.valid_date_formats
         for v in valid:
             try:
-                o = datetime.datetime.strptime(d, v)
-                return datetime.datetime.strptime(str(o), format)
+                return datetime.datetime.strptime(d, v)
             except ValueError:
                 pass
         raise argparse.ArgumentTypeError(

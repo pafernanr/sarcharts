@@ -1,11 +1,19 @@
 import datetime
 import os
-import re
 import sys
 
 import fnmatch
 from pathlib import Path
 import subprocess
+
+
+# 'sar' default format on first place for performance
+valid_date_formats = ["%Y-%m-%d %H:%M:%S",
+                      "%Y-%m-%dT%H:%M:%S%z",
+                      "%Y-%m-%d %H:%M",
+                      "%Y-%m-%d %H",
+                      "%Y-%m-%d"
+                      ]
 
 
 def debug(args, sev, msg):
@@ -71,18 +79,10 @@ def sortfiles_by_mtime(files):
 
 
 def valid_date(args, d):
-    # 'sar' default format on first place for performance
-    valid = ["%Y-%m-%d %H:%M:%S",
-             "%Y-%m-%dT%H:%M:%S%z",
-             "%Y-%m-%d %H:%M:%S %Z",
-             "%Y-%m-%d %H:%M",
-             "%Y-%m-%d %H",
-             "%Y-%m-%d"
-             ]
+    valid = valid_date_formats
     for v in valid:
         try:
-            o = datetime.datetime.strptime(d, v)
-            return o
+            return datetime.datetime.strptime(d, v)
         except ValueError:
             continue
     debug(args, 'E', f"not a valid date: {d!r}. Valid formats: {str(valid)}")

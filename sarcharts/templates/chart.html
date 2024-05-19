@@ -117,11 +117,13 @@ function showChart(name) {
             text: 'value'
           }
         },
+        {% if "yAxisID" in (details['datasets'].values()|list)[0][0] %}
         y1: {
         type: 'linear',
         display: true,
         position: 'right'
         }
+        {% endif %}
       },
       plugins: {
         legend: {

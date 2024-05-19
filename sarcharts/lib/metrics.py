@@ -25,7 +25,7 @@ class Metrics:
 
             for a in charts[row[1]]['activities']:
                 for d in charts[row[1]]['activities'][a]['datasets']:
-                    charts[row[1]]['activities'][a]['datasets'][d].append({
+                    charts[row[1]]['activities'][a]['datasets'][d].insert(0, {
                         "label": row[2],
                         "yAxisID": 'y1',
                         "values": values
