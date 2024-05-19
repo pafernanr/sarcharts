@@ -17,10 +17,11 @@ class Events:
                                 f"Host '{row[1]}' from '{args.eventfile}'"
                                 + " not in 'sar' data.")
                             continue
-                        charts[row[1]]['xlabels'].append(row[0])
-                        if row[2] not in charts[row[1]]['events']:
-                            charts[row[1]]['events'][row[2]] = []
-                        charts[row[1]]['events'][row[2]].append(
-                               {'date': row[0], 'text': row[3]})
+                        if util.in_date_range(args, row[0]):
+                            charts[row[1]]['xlabels'].append(row[0])
+                            if row[2] not in charts[row[1]]['events']:
+                                charts[row[1]]['events'][row[2]] = []
+                            charts[row[1]]['events'][row[2]].append(
+                                   {'date': row[0], 'text': row[3]})
 
         return charts

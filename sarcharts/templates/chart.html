@@ -165,10 +165,9 @@ var myCharts = {
         {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
         label: '{{ data[i]['label'] }}',
         yAxisID: '{{ data[i]['yAxisID']|default('y') }}',
-        type: '{{ data[i]['type']|default('bar') }}',
         data: {{ data[i]['values'] }},
         borderColor: 'rgb({{ colors[i] }})',
-        backgroundColor: 'rgb({{ colors[i] }})'
+        backgroundColor: 'rgb({{ colors[i] }}, 0.3)'
         }{{ ", " if not loop.last else "" }}
       {% endif %}
     {% endfor %}

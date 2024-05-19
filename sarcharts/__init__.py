@@ -125,8 +125,8 @@ class SarCharts:
             if len(sarfiles) > 0:
                 util.debug(self.args, 'D', "sarfiles: " + str(sarfiles))
                 charts = Sadf().sar_to_chartjs(self.args, sarfiles)
-                #charts = Events.getCSVdata(self.args, charts)
-                # charts = Metrics.getCSVdata(self.args, charts)
+                charts = Events.getCSVdata(self.args, charts)
+                charts = Metrics.getCSVdata(self.args, charts)
                 ChartJS().write_files(self.args, charts)
                 util.debug(self.args, '', "Open SarCharts in default browser.")
                 webbrowser.open(self.args.outputpath, 0, True)

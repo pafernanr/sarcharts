@@ -19,15 +19,15 @@ class Metrics:
                                 f"Host '{row[1]}' from '{args.metricfile}'"
                                 + " not in 'sar' data.")
                             continue
-                        charts[row[1]]['xlabels'].append(row[0])
-                        values.append({'x': row[0], 'y': row[3]})
+                        if util.in_date_range(args, row[0]):
+                            charts[row[1]]['xlabels'].append(row[0])
+                            values.append({'x': row[0], 'y': row[3]})
 
             for a in charts[row[1]]['activities']:
                 for d in charts[row[1]]['activities'][a]['datasets']:
                     charts[row[1]]['activities'][a]['datasets'][d].append({
                         "label": row[2],
                         "yAxisID": 'y1',
-                        "type": 'line',
                         "values": values
                         })
 
