@@ -2747,15 +2747,15 @@ $(document).ready(function () {
       selchart=$(elem).text().replace(/\s+/g, "");
       window.location = selhost+"_"+selchart+".html"
   });
-  $("body").on("click",function(e) {
-    if (!$(e.target).closest('#eventdescription').length) {
-        $('#eventname').hide();
-        $('#eventdescription').hide();
-        $("#footer").css("border-color", "#000");
-        $("#footer").css("color", "#000");
-        $("#copyright").show();
-    }
-  });
+  // $("body").on("click",function(e) {
+  //   if (!$(e.target).closest('#eventdescription').length) {
+  //       $('#eventname').hide();
+  //       $('#eventdescription').hide();
+  //       $("#footer").css("border-color", "#000");
+  //       $("#footer").css("color", "#000");
+  //       $("#copyright").show();
+  //   }
+  // });
 });
 
 </script>
