@@ -79,7 +79,8 @@ class Sadf:
                             charts[nodename]['xlabels'].append(date)
                             charts[nodename]['events']['Restart'].append(
                                 {'date': date,
-                                 'description': f'Restart events are included in sar files.'
+                                 'description': ('Restart events are included in sar files.'
+                                                 + ' Check <b>sarcharts --help</b> to add your custom events and metrics.')
                                  })
                 for istats in range(len(hdata['statistics'])):
                     for act, adata in hdata['statistics'][istats].items():
@@ -176,7 +177,7 @@ class Sadf:
         # write csv files
         for nodename, nodecharts in charts.items():
             for activity, csvdata in charts[nodename]['activities'].items():
-                with open(f"{args.outputpath}/sar/{nodename}_{activity}.csv", "w") as f:
+                with open(f"{args.outputpath}/csvfiles/{nodename}_{activity}.csv", "w") as f:
                     # workaround for io.cs headers (and maybe other activities)
                     n = len(csvdata['content'][1])
                     f.write(";".join(csvdata['content'][0][:n]) + "\n")
@@ -188,7 +189,7 @@ class Sadf:
         # build the chartjs dict
         for nodename, nodecharts in charts.items():
             for activity, csvdata in nodecharts['activities'].items():
-                csvfile = f"{args.outputpath}/sar/{nodename}_{activity}.csv"
+                csvfile = f"{args.outputpath}/csvfiles/{nodename}_{activity}.csv"
                 with open(csvfile) as f:
                     charts[nodename]['activities'][activity]['datasets'] = {}
                     # set the first data field
@@ -212,7 +213,6 @@ class Sadf:
                                     "label": h,
                                     "values": []
                                     })
-
                         for f in range(len(fields[datastart:])):
                             charts[nodename]['activities'][activity]['datasets'][item][f]['values'].append({
                                     'x': fields[2],

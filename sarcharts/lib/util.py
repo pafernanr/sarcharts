@@ -13,9 +13,11 @@ valid_date_formats = ["%Y-%m-%d %H:%M:%S",
                       "%Y-%m-%dT%H:%M:%S",
                       "%Y-%m-%d %H:%M",
                       "%Y-%m-%d %H",
-                      "%Y-%m-%d"
+                      "%Y-%m-%d",
+                      "%Y %b %d %H:%M:%S"
                       # 14/May/2024:14:49:20 +0200 # apache
                       # May 14 14:42:56 # messages
+                      # Apr 21 13:01:01 # cron
                       ]
 
 

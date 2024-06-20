@@ -1,30 +1,42 @@
 import datetime
 import os
+import re
 
 import jinja2
+from random import randrange
 
 from sarcharts.lib.progressbar import ProgressBar
 
 
 class ChartJS:
 
-    colors = [
-        '255, 99, 132',
-        '255, 159, 64',
-        '255, 205, 86',
-        '75, 192, 192',
-        '54, 162, 235',
-        '153, 102, 255',
-        '201, 203, 207',
-        '153, 24, 44',
-        '54, 157, 72',
-        '75, 89, 123',
-        '255, 22, 237',
-        '99, 215, 99',
-        '199, 215, 29',
-        '68, 15, 229',
-        '88, 115, 67',
-        '149, 245, 44']
+    def __init__(self, hidden_metrics, hidden_custom):
+        self.hidden_metrics = hidden_metrics
+        self.hidden_custom = hidden_custom
+
+    def get_color_palette(self, datasets):
+        number = 0
+        for k, data in datasets.items():
+            size = len(data)
+            if size > number:
+                number = size
+        colors = []
+        for i in range(0, number):
+            r = randrange(225)
+            g = randrange(225)
+            b = randrange(225)
+            colors.append(f"{r}, {g}, {b}")
+        return colors
+
+    def is_hidden_metric(self, string):
+        for r in self.hidden_metrics:
+            if r != "" and re.search(r, string):
+                return True
+
+    def is_hidden_custom(self, string):
+        for r in self.hidden_custom:
+            if r != "" and re.search(r, string):
+                return True
 
     def write_files(self, args, charts):
         pb = ProgressBar()
@@ -35,8 +47,16 @@ class ChartJS:
         pb.all_entries = all_entries
         pb.start_time = datetime.datetime.now()
         pbi = 0
+        # show full metric list
+        # for activity, csvdata in charts[list(charts.keys())[0]]['activities'].items():
+        #     for i in list(csvdata['datasets'].values())[0]:
+        #         print(f"{activity}:.*:{i['label']}")
+        #     break
+
+        # write output
         for nodename, nodecharts in charts.items():
             for activity, csvdata in nodecharts['activities'].items():
+                palette = self.get_color_palette(csvdata['datasets'])
                 outputfile = args.outputpath + f"/{nodename}_{activity}.html"
                 pbi += 1
                 pb.print_bar(pbi, f"{activity}.")
@@ -51,17 +71,20 @@ class ChartJS:
                     "details": csvdata,
                     "events": nodecharts['events'],
                     "pages": sorted(nodecharts['activities'].keys()),
-                    "colors": self.colors,
+                    "colors": palette,
                     "hostname": nodename,
-                    "hostnames": charts.keys()
-                    }
+                    "hostnames": charts.keys()                    }
                 parent = (
                     os.path.dirname(
                         os.path.realpath(__file__)) + "/../templates/"
                         )
                 environment = (
-                    jinja2.Environment(loader=jinja2.FileSystemLoader(parent))
-                    )
+                    jinja2.Environment(
+                        loader=jinja2.FileSystemLoader(parent),
+                        extensions=['jinja2.ext.loopcontrols'])
+                )
+                environment.filters["is_hidden_metric"] = self.is_hidden_metric
+                environment.filters["is_hidden_custom"] = self.is_hidden_custom
                 template = environment.get_template("chart.html")
                 with open(outputfile, mode="w", encoding="utf-8") as results:
                     results.write(template.render(context))

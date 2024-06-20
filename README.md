@@ -11,7 +11,7 @@ SarCharts gets [sysstat](https://sysstat.github.io/) files from provided `sarfil
 
 ### Usage
 ~~~
-usage: sarcharts [-h] [-d {D,I,W,E}] [-e EVENTFILE] [-f FROMDATE] [-m METRICFILE] [-o OUTPUTPATH] [-t TODATE] [-q] [sarfilespaths ...]
+usage: sarcharts [-h] [-c CONFIGFILE] [-d {D,I,W,E}] [-e EVENTFILE] [-f FROMDATE] [-m METRICFILE] [-o OUTPUTPATH] [-t TODATE] [-q] [sarfilespaths ...]
 
 SarCharts gets "sysstat" files from provided `sarfilespaths` and generates dynamic HTML Charts.
 
@@ -20,6 +20,8 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -c CONFIGFILE, --configfile CONFIGFILE
+                        Use alternative config file. Default `~/.sarcharts.cfg`.
   -d {D,I,W,E}, --debug {D,I,W,E}
                         Set debug level. Default `W`.
   -e EVENTFILE, --eventfile EVENTFILE
@@ -37,5 +39,5 @@ optional arguments:
 
 | Example Chart |
 | --- |
-| ![](/doc/sarcharts.png) |
+| ![](/docs/sarcharts.png) |
 

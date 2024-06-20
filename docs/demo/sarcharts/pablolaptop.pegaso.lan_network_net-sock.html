@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sarcharts pablolaptop.pegaso.lan</title>
+    <link rel="stylesheet" href="html/css/sarcharts.css" />
+    <link rel="stylesheet" href="html/css/ul-select.css" />
+    <script src="html/js/jquery.js"></script>
+    <script src="html/js/hammer.min.js"></script>
+    <script src="html/js/ul-select.js"></script>
+    <script src="html/js/chart.umd.js"></script>
+    <script src="html/js/chartjs-plugin-zoom.min.js"></script>
+    <script src="html/js/chartjs-plugin-annotation.min.js"></script>
+    <script src="html/js/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+</head>
+<body>
+<section class="container">
+      <div class="info">
+        <ul>
+            <li><b>Start:</b> 2024-06-08 14:00:01 CET</li>
+            <li><b>End:</b> 2024-06-08T19:00:43+02:00 CET</li>
+            <li><b>System:</b> Linux</li>
+            <li><b>Release:</b> 6.8.11-300.fc40.x86_64</li>
+            <li><b>Architecture:</b> x86_64</li>
+            <li><b>CPU:</b> 12</li>
+        </ul><!--
+        
+        -->
+    </div>
+    <div class="hostlist">
+        <ul id="hostlist">
+        
+            
+                <li class="active">pablolaptop.pegaso.lan&nbsp; &nbsp; &nbsp;</li>
+            
+        
+        </ul>
+    </div>
+    <div class="chartlist">
+        <ul id="chartlist">
+            
+                
+                <li>cpu-load</li>
+                
+            
+                
+                <li>disk</li>
+                
+            
+                
+                <li>hugepages</li>
+                
+            
+                
+                <li>io_io-discard</li>
+                
+            
+                
+                <li>io_io-reads</li>
+                
+            
+                
+                <li>io_io-writes</li>
+                
+            
+                
+                <li>io_tps</li>
+                
+            
+                
+                <li>kernel</li>
+                
+            
+                
+                <li>memory</li>
+                
+            
+                
+                <li>network_net-dev</li>
+                
+            
+                
+                <li>network_net-edev</li>
+                
+            
+                
+                <li>network_net-nfs</li>
+                
+            
+                
+                <li>network_net-nfsd</li>
+                
+            
+                
+                <li class="active"">network_net-sock&nbsp; &nbsp; &nbsp;</li>
+                
+            
+                
+                <li>network_softnet</li>
+                
+            
+                
+                <li>paging</li>
+                
+            
+                
+                <li>process-and-context-switch</li>
+                
+            
+                
+                <li>psi_psi-cpu</li>
+                
+            
+                
+                <li>psi_psi-io</li>
+                
+            
+                
+                <li>psi_psi-mem</li>
+                
+            
+                
+                <li>queue</li>
+                
+            
+                
+                <li>swap-pages</li>
+                
+            
+        </ul>
+    </div>
+
+
+  <div class="activities">
+    <ul>
+  
+    
+  
+    </ul>
+  </div>
+  <div class="custom">
+    <input type="checkbox" checked id="checkall"> <b>Show/Hide all</b>
+    <div class="extrametrics">
+    
+    
+    
+      
+      <!-- network_net-sock:DBconnections -->
+      
+      <label><input type="checkbox" checked id="metric0" style="accent-color: rgb(73, 207, 116);"> DBconnections</label>
+      
+    
+    
+    
+    
+      
+      <!-- network_net-sock:HTTPrequests -->
+      
+      <label><input type="checkbox" checked id="metric1" style="accent-color: rgb(13, 202, 204);"> HTTPrequests</label>
+      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    </div>
+  </div>
+  <div class="chart">
+    <canvas id="chartcanvas"></canvas>
+  </div>
+  <div class="footer">
+    <div id="eventname"></div>
+    <div id="eventdescription"></div>
+    <div id="copyright">
+      <a href="https://github.com/pafernanr/sarcharts">© sarcharts</a>
+    </div>
+  </div>
+</section>
+<script>
+$('.i_inactive').click(function() {
+  $(".i_active").attr("class","i_inactive");
+  $(this).attr("class","i_active");
+  showChart($(this).text());
+});
+
+  
+  
+  
+  const event0_0 = {
+    type: 'line',
+    enter: function({element}) {
+      $("#copyright").hide();
+      $("#eventdescription").show();
+      $("#eventdescription").html("Restart events are included in sar files. Check <b>sarcharts --help</b> to add your custom events and metrics.");
+      $("#eventdescription").css("color", element.label.options.color);
+      $("#eventname").show();
+      $("#eventname").html("2024-06-08 15:53:52 | Restart");
+      // $("#eventname").css("border-color", element.label.options.color);
+      $("#eventname").css("color", element.label.options.color);
+      return true;
+    },
+    // leave: function({element}) {
+    //   $("#eventdescription").css("border-color", "#000");
+    //   $("#eventdescription").css("color", "#000");
+    //   return true;
+    // },
+    borderColor: "rgba(73, 207, 116, 0.4)",
+    borderWidth: 1,
+    display: true,
+    label: {
+      display: true,
+      position: 'start',
+      content: "Restart",
+      backgroundColor: 'transparent',
+      opacity: 0,
+      rotation: 90,
+      xAdjust: 5,
+      yAdjust: 15,
+      font: { size: 11 },
+      color: 'rgba(73, 207, 116)'
+    },
+    scaleID: 'x',
+    value: "2024-06-08 15:53:52"
+  };
+  
+
+  
+  
+  
+  const event1_0 = {
+    type: 'line',
+    enter: function({element}) {
+      $("#copyright").hide();
+      $("#eventdescription").show();
+      $("#eventdescription").html("Server Backup was started at this time.<div id=eventdemo>\rEvents can use HTML tags. <font style='color: red'>Use it with caution!</font>\rCheck used CSV files here:<ul><li><a href='../events.csv'>events.csv</a></li><li><a href='../metrics.csv'>metrics.csv</a></li></ul></div>");
+      $("#eventdescription").css("color", element.label.options.color);
+      $("#eventname").show();
+      $("#eventname").html("2024-06-08 19:00:43+02:00 | Backup Started");
+      // $("#eventname").css("border-color", element.label.options.color);
+      $("#eventname").css("color", element.label.options.color);
+      return true;
+    },
+    // leave: function({element}) {
+    //   $("#eventdescription").css("border-color", "#000");
+    //   $("#eventdescription").css("color", "#000");
+    //   return true;
+    // },
+    borderColor: "rgba(13, 202, 204, 0.4)",
+    borderWidth: 1,
+    display: true,
+    label: {
+      display: true,
+      position: 'start',
+      content: "Backup Started",
+      backgroundColor: 'transparent',
+      opacity: 0,
+      rotation: 90,
+      xAdjust: 5,
+      yAdjust: 15,
+      font: { size: 11 },
+      color: 'rgba(13, 202, 204)'
+    },
+    scaleID: 'x',
+    value: "2024-06-08 19:00:43+02:00"
+  };
+  
+
+  
+  
+  
+  const event2_0 = {
+    type: 'line',
+    enter: function({element}) {
+      $("#copyright").hide();
+      $("#eventdescription").show();
+      $("#eventdescription").html("Out Of Memory detected.<div id=eventdemo>\r\(Multiple <b>hostname</b>/s, <b>eventname</b>/s and <b>date formats</b> are supported on same CSV file:<ul><li>%Y-%m-%d %H:%M:%S</li><li>%Y-%m-%dT%H:%M:%S%z</li><li>%Y-%m-%dT%H:%M:%S</li><li>%Y-%m-%d %H:%M</li><li>%Y-%m-%d %H</li><li>%Y-%m-%d</li></ul>\rCheck used CSV files here:<ul><li><a href='../events.csv'>events.csv</a></li><li><a href='../metrics.csv'>metrics.csv</a></li></ul></div>");
+      $("#eventdescription").css("color", element.label.options.color);
+      $("#eventname").show();
+      $("#eventname").html("2024-06-08 19:20:00 | OOM");
+      // $("#eventname").css("border-color", element.label.options.color);
+      $("#eventname").css("color", element.label.options.color);
+      return true;
+    },
+    // leave: function({element}) {
+    //   $("#eventdescription").css("border-color", "#000");
+    //   $("#eventdescription").css("color", "#000");
+    //   return true;
+    // },
+    borderColor: "rgba(87, 27, 216, 0.4)",
+    borderWidth: 1,
+    display: true,
+    label: {
+      display: true,
+      position: 'start',
+      content: "OOM",
+      backgroundColor: 'transparent',
+      opacity: 0,
+      rotation: 90,
+      xAdjust: 5,
+      yAdjust: 15,
+      font: { size: 11 },
+      color: 'rgba(87, 27, 216)'
+    },
+    scaleID: 'x',
+    value: "2024-06-08 19:20:00"
+  };
+  
+
+  
+  
+  
+  const event3_0 = {
+    type: 'line',
+    enter: function({element}) {
+      $("#copyright").hide();
+      $("#eventdescription").show();
+      $("#eventdescription").html("Database connections is greater than 120.<div id=eventdemo>\rYou can also add additional metrics using <b>-m custommetrics.csv</b> parameter.\rCheck used CSV files here:<ul><li><a href='../events.csv'>events.csv</a></li><li><a href='../metrics.csv'>metrics.csv</a></li></ul></div>");
+      $("#eventdescription").css("color", element.label.options.color);
+      $("#eventname").show();
+      $("#eventname").html("2024-06-08 19:06:00 | DB Conn");
+      // $("#eventname").css("border-color", element.label.options.color);
+      $("#eventname").css("color", element.label.options.color);
+      return true;
+    },
+    // leave: function({element}) {
+    //   $("#eventdescription").css("border-color", "#000");
+    //   $("#eventdescription").css("color", "#000");
+    //   return true;
+    // },
+    borderColor: "rgba(113, 40, 157, 0.4)",
+    borderWidth: 1,
+    display: true,
+    label: {
+      display: true,
+      position: 'start',
+      content: "DB Conn",
+      backgroundColor: 'transparent',
+      opacity: 0,
+      rotation: 90,
+      xAdjust: 5,
+      yAdjust: 15,
+      font: { size: 11 },
+      color: 'rgba(113, 40, 157)'
+    },
+    scaleID: 'x',
+    value: "2024-06-08 19:06:00"
+  };
+  
+
+
+function showChart(name) {
+  myChart.destroy();
+  myChart = new Chart(ctx, {
+    type: 'line',
+      data: {
+        labels: myCharts[name]['labels'],
+        datasets: myCharts[name]['datasets']
+      },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            tooltipFormat: 'yyyy:LL:dd HH:mm:ss',
+            displayFormats: { // https://github.com/moment/luxon/blob/master/docs/formatting.md
+              'millisecond': 'yyyy:LL:dd HH:mm:ss SSS',
+              'second': 'yyyy:LL:dd HH:mm:ss',
+              'minute': 'yyyy:LL:dd HH:mm:ss',
+              'hour': 'yyyy:LL:dd HH:mm:ss',
+              'day': 'yyyy:LL:dd HH:mm:ss',
+              'week': 'yyyy:LL:dd HH:mm:ss',
+              'month': 'yyyy:LL:dd HH:mm:ss',
+              'quarter': 'yyyy LL:dd HH:mm:ss',
+              'year': 'yyyy:LL:dd HH:mm:ss'
+            }
+          },
+          ticks: {
+            source: 'auto'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'network_net-sock'
+          }
+        },
+        
+          
+          
+        y0: {
+          title: {
+            display: true,
+            text: 'extrametric_DBconnections',
+            color: 'rgb(73, 207, 116)',
+          },
+          type: 'linear',
+          display: false,
+          position: 'right',
+          ticks: {
+            color: 'rgb(73, 207, 116)',
+            backdropColor: 'rgb(73, 207, 116)',
+            padding: 1,
+            backdropPadding: 1
+          },
+          grid: {
+            tickColor: 'rgb(73, 207, 116, 0.2)',
+            color: 'rgb(73, 207, 116, 0.2)'
+          }
+        },
+          
+        
+          
+          
+        y1: {
+          title: {
+            display: true,
+            text: 'extrametric_HTTPrequests',
+            color: 'rgb(13, 202, 204)',
+          },
+          type: 'linear',
+          display: false,
+          position: 'right',
+          ticks: {
+            color: 'rgb(13, 202, 204)',
+            backdropColor: 'rgb(13, 202, 204)',
+            padding: 1,
+            backdropPadding: 1
+          },
+          grid: {
+            tickColor: 'rgb(13, 202, 204, 0.2)',
+            color: 'rgb(13, 202, 204, 0.2)'
+          }
+        },
+          
+        
+          
+          
+        
+          
+          
+        
+          
+          
+        
+          
+          
+        
+          
+          
+        
+          
+          
+        
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+                    filter: item => item.text.indexOf('extrametric_') == -1
+          }
+        },
+        annotation: { annotations: { 
+          
+            event0_0,
+          
+            event1_0,
+          
+            event2_0,
+          
+            event3_0,
+          
+          }
+        },
+        zoom: {
+          limits: {
+            x: { min:'original', max:'original' }
+          },
+          zoom: {
+            drag: {
+              enabled: true
+            },
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'x',
+          }
+        }
+      }
+    }
+  });
+}
+
+var myCharts = {
+  
+  '': {
+    'datasets': [
+    
+      
+        {
+        
+        // network_net-sock::extrametric_DBconnections
+        
+        label: 'extrametric_DBconnections',
+        yAxisID: 'y0',
+        data: [{'x': '2024-06-08 14:00:01', 'y': '24'}, {'x': '2024-06-08 14:10:01', 'y': '29'}, {'x': '2024-06-08 14:20:02', 'y': '20'}, {'x': '2024-06-08 14:30:03', 'y': '15'}, {'x': '2024-06-08 14:40:03', 'y': '29'}, {'x': '2024-06-08 14:50:04', 'y': '30'}, {'x': '2024-06-08 15:00:04', 'y': '36'}, {'x': '2024-06-08 15:10:05', 'y': '35'}, {'x': '2024-06-08 15:20:06', 'y': '42'}, {'x': '2024-06-08 15:30:06', 'y': '47'}, {'x': '2024-06-08 15:40:07', 'y': '44'}, {'x': '2024-06-08 15:50:07', 'y': '37'}, {'x': '2024-06-08 16:00:08', 'y': '32'}, {'x': '2024-06-08 16:10:09', 'y': '37'}, {'x': '2024-06-08 16:20:09', 'y': '36'}, {'x': '2024-06-08 16:30:00', 'y': '35'}, {'x': '2024-06-08 16:40:00', 'y': '34'}, {'x': '2024-06-08 16:50:01', 'y': '42'}, {'x': '2024-06-08 17:00:02', 'y': '96'}, {'x': '2024-06-08 17:10:01', 'y': '155'}, {'x': '2024-06-08 17:20:03', 'y': '187'}, {'x': '2024-06-08 17:30:04', 'y': '0'}, {'x': '2024-06-08 17:40:04', 'y': '100'}, {'x': '2024-06-08 17:50:05', 'y': '98'}, {'x': '2024-06-08 18:00:05', 'y': '40'}, {'x': '2024-06-08 18:10:06', 'y': '38'}, {'x': '2024-06-08 18:20:07', 'y': '32'}, {'x': '2024-06-08 18:30:07', 'y': '36'}, {'x': '2024-06-08 18:40:08', 'y': '34'}, {'x': '2024-06-08 18:50:08', 'y': '42'}, {'x': '2024-06-08 19:00:09', 'y': '41'}, {'x': '2024-06-08 19:10:00', 'y': '45'}, {'x': '2024-06-08 19:20:00', 'y': '32'}, {'x': '2024-06-08 19:30:01', 'y': '36'}, {'x': '2024-06-08 19:40:01', 'y': '38'}, {'x': '2024-06-08 20:00:03', 'y': '47'}, {'x': '2024-06-08 20:10:00', 'y': '43'}, {'x': '2024-06-08 20:20:49', 'y': '41'}, {'x': '2024-06-08 20:30:49', 'y': '43'}, {'x': '2024-06-08 20:40:49', 'y': '36'}, {'x': '2024-06-08 20:50:49', 'y': '31'}],
+        borderColor: 'rgb(73, 207, 116)',
+        backgroundColor: 'rgb(73, 207, 116, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
+        }, 
+      
+    
+      
+        {
+        
+        // network_net-sock::extrametric_HTTPrequests
+        
+        label: 'extrametric_HTTPrequests',
+        yAxisID: 'y1',
+        data: [{'x': '2024-06-08 14:00:01', 'y': '440'}, {'x': '2024-06-08 14:10:01', 'y': '440'}, {'x': '2024-06-08 14:20:02', 'y': '440'}, {'x': '2024-06-08 14:30:03', 'y': '430'}, {'x': '2024-06-08 14:40:03', 'y': '440'}, {'x': '2024-06-08 14:50:04', 'y': '450'}, {'x': '2024-06-08 15:00:04', 'y': '450'}, {'x': '2024-06-08 15:10:05', 'y': '450'}, {'x': '2024-06-08 15:20:06', 'y': '460'}, {'x': '2024-06-08 15:30:06', 'y': '460'}, {'x': '2024-06-08 15:40:07', 'y': '460'}, {'x': '2024-06-08 15:50:07', 'y': '440'}, {'x': '2024-06-08 16:00:08', 'y': '442'}, {'x': '2024-06-08 16:10:09', 'y': '440'}, {'x': '2024-06-08 16:20:09', 'y': '440'}, {'x': '2024-06-08 16:30:00', 'y': '440'}, {'x': '2024-06-08 16:40:00', 'y': '440'}, {'x': '2024-06-08 16:50:01', 'y': '450'}, {'x': '2024-06-08 17:00:02', 'y': '490'}, {'x': '2024-06-08 17:10:01', 'y': '781'}, {'x': '2024-06-08 17:20:03', 'y': '790'}, {'x': '2024-06-08 17:30:04', 'y': '1000'}, {'x': '2024-06-08 17:40:04', 'y': '800'}, {'x': '2024-06-08 17:50:05', 'y': '760'}, {'x': '2024-06-08 18:00:05', 'y': '650'}, {'x': '2024-06-08 18:10:06', 'y': '440'}, {'x': '2024-06-08 18:20:07', 'y': '440'}, {'x': '2024-06-08 18:30:07', 'y': '440'}, {'x': '2024-06-08 18:40:08', 'y': '440'}, {'x': '2024-06-08 18:50:08', 'y': '450'}, {'x': '2024-06-08 19:00:09', 'y': '455'}, {'x': '2024-06-08 19:10:00', 'y': '450'}, {'x': '2024-06-08 19:20:00', 'y': '440'}, {'x': '2024-06-08 19:30:01', 'y': '440'}, {'x': '2024-06-08 19:40:01', 'y': '440'}, {'x': '2024-06-08 20:00:03', 'y': '450'}, {'x': '2024-06-08 20:10:00', 'y': '450'}, {'x': '2024-06-08 20:20:49', 'y': '450'}, {'x': '2024-06-08 20:30:49', 'y': '450'}, {'x': '2024-06-08 20:40:49', 'y': '440'}, {'x': '2024-06-08 20:50:49', 'y': '440'}],
+        borderColor: 'rgb(13, 202, 204)',
+        backgroundColor: 'rgb(13, 202, 204, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
+        }, 
+      
+    
+      
+        {
+        
+        // network_net-sock::totsck
+        
+          hidden: true,
+        
+        label: 'totsck',
+        yAxisID: 'y',
+        data: [{'x': '2024-06-08 14:00:04', 'y': '1469'}, {'x': '2024-06-08 14:10:04', 'y': '1461'}, {'x': '2024-06-08 14:20:05', 'y': '1461'}, {'x': '2024-06-08 14:30:06', 'y': '1461'}, {'x': '2024-06-08 14:40:03', 'y': '1506'}, {'x': '2024-06-08 14:50:07', 'y': '1503'}, {'x': '2024-06-08 15:00:07', 'y': '1532'}, {'x': '2024-06-08 15:10:08', 'y': '1542'}, {'x': '2024-06-08 15:20:09', 'y': '1565'}, {'x': '2024-06-08 15:30:09', 'y': '1551'}, {'x': '2024-06-08 15:40:00', 'y': '1549'}, {'x': '2024-06-08 15:50:00', 'y': '1559'}, {'x': '2024-06-08 16:10:09', 'y': '1283'}, {'x': '2024-06-08 16:20:09', 'y': '1246'}, {'x': '2024-06-08 16:30:00', 'y': '1273'}, {'x': '2024-06-08 16:40:01', 'y': '1272'}, {'x': '2024-06-08 16:50:01', 'y': '1311'}, {'x': '2024-06-08 17:00:02', 'y': '1276'}, {'x': '2024-06-08 17:10:02', 'y': '1255'}, {'x': '2024-06-08 17:20:03', 'y': '1256'}, {'x': '2024-06-08 17:30:04', 'y': '1260'}, {'x': '2024-06-08 17:40:04', 'y': '1260'}, {'x': '2024-06-08 17:50:05', 'y': '1260'}, {'x': '2024-06-08 18:00:06', 'y': '1264'}, {'x': '2024-06-08 18:10:06', 'y': '1265'}, {'x': '2024-06-08 18:20:07', 'y': '1266'}, {'x': '2024-06-08 18:30:07', 'y': '1266'}, {'x': '2024-06-08 18:40:08', 'y': '1266'}, {'x': '2024-06-08 18:50:09', 'y': '1264'}, {'x': '2024-06-08 19:00:09', 'y': '1267'}, {'x': '2024-06-08 19:10:00', 'y': '1285'}, {'x': '2024-06-08 19:20:01', 'y': '1277'}, {'x': '2024-06-08 19:30:01', 'y': '1274'}, {'x': '2024-06-08 19:40:02', 'y': '1274'}, {'x': '2024-06-08 19:50:02', 'y': '1273'}, {'x': '2024-06-08 20:00:03', 'y': '1125'}, {'x': '2024-06-08 20:10:04', 'y': '1138'}, {'x': '2024-06-08 20:20:04', 'y': '1120'}, {'x': '2024-06-08 20:30:05', 'y': '1115'}, {'x': '2024-06-08 20:40:06', 'y': '1096'}, {'x': '2024-06-08 20:50:06', 'y': '1094'}],
+        borderColor: 'rgb(87, 27, 216)',
+        backgroundColor: 'rgb(87, 27, 216, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
+        }, 
+      
+    
+      
+        {
+        
+        // network_net-sock::tcpsck
+        
+          hidden: true,
+        
+        label: 'tcpsck',
+        yAxisID: 'y',
+        data: [{'x': '2024-06-08 14:00:04', 'y': '24'}, {'x': '2024-06-08 14:10:04', 'y': '25'}, {'x': '2024-06-08 14:20:05', 'y': '23'}, {'x': '2024-06-08 14:30:06', 'y': '22'}, {'x': '2024-06-08 14:40:03', 'y': '32'}, {'x': '2024-06-08 14:50:07', 'y': '38'}, {'x': '2024-06-08 15:00:07', 'y': '41'}, {'x': '2024-06-08 15:10:08', 'y': '31'}, {'x': '2024-06-08 15:20:09', 'y': '41'}, {'x': '2024-06-08 15:30:09', 'y': '30'}, {'x': '2024-06-08 15:40:00', 'y': '34'}, {'x': '2024-06-08 15:50:00', 'y': '36'}, {'x': '2024-06-08 16:10:09', 'y': '43'}, {'x': '2024-06-08 16:20:09', 'y': '27'}, {'x': '2024-06-08 16:30:00', 'y': '30'}, {'x': '2024-06-08 16:40:01', 'y': '29'}, {'x': '2024-06-08 16:50:01', 'y': '34'}, {'x': '2024-06-08 17:00:02', 'y': '27'}, {'x': '2024-06-08 17:10:02', 'y': '27'}, {'x': '2024-06-08 17:20:03', 'y': '26'}, {'x': '2024-06-08 17:30:04', 'y': '27'}, {'x': '2024-06-08 17:40:04', 'y': '27'}, {'x': '2024-06-08 17:50:05', 'y': '27'}, {'x': '2024-06-08 18:00:06', 'y': '31'}, {'x': '2024-06-08 18:10:06', 'y': '27'}, {'x': '2024-06-08 18:20:07', 'y': '26'}, {'x': '2024-06-08 18:30:07', 'y': '26'}, {'x': '2024-06-08 18:40:08', 'y': '26'}, {'x': '2024-06-08 18:50:09', 'y': '27'}, {'x': '2024-06-08 19:00:09', 'y': '27'}, {'x': '2024-06-08 19:10:00', 'y': '30'}, {'x': '2024-06-08 19:20:01', 'y': '30'}, {'x': '2024-06-08 19:30:01', 'y': '27'}, {'x': '2024-06-08 19:40:02', 'y': '26'}, {'x': '2024-06-08 19:50:02', 'y': '25'}, {'x': '2024-06-08 20:00:03', 'y': '28'}, {'x': '2024-06-08 20:10:04', 'y': '31'}, {'x': '2024-06-08 20:20:04', 'y': '25'}, {'x': '2024-06-08 20:30:05', 'y': '27'}, {'x': '2024-06-08 20:40:06', 'y': '27'}, {'x': '2024-06-08 20:50:06', 'y': '25'}],
+        borderColor: 'rgb(113, 40, 157)',
+        backgroundColor: 'rgb(113, 40, 157, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
+        }, 
+      
+    
+      
+        {
+        
+        // network_net-sock::udpsck
+        
+          hidden: true,
+        
+        label: 'udpsck',
+        yAxisID: 'y',
+        data: [{'x': '2024-06-08 14:00:04', 'y': '31'}, {'x': '2024-06-08 14:10:04', 'y': '22'}, {'x': '2024-06-08 14:20:05', 'y': '24'}, {'x': '2024-06-08 14:30:06', 'y': '24'}, {'x': '2024-06-08 14:40:03', 'y': '44'}, {'x': '2024-06-08 14:50:07', 'y': '25'}, {'x': '2024-06-08 15:00:07', 'y': '25'}, {'x': '2024-06-08 15:10:08', 'y': '28'}, {'x': '2024-06-08 15:20:09', 'y': '29'}, {'x': '2024-06-08 15:30:09', 'y': '34'}, {'x': '2024-06-08 15:40:00', 'y': '31'}, {'x': '2024-06-08 15:50:00', 'y': '23'}, {'x': '2024-06-08 16:10:09', 'y': '26'}, {'x': '2024-06-08 16:20:09', 'y': '16'}, {'x': '2024-06-08 16:30:00', 'y': '20'}, {'x': '2024-06-08 16:40:01', 'y': '17'}, {'x': '2024-06-08 16:50:01', 'y': '17'}, {'x': '2024-06-08 17:00:02', 'y': '18'}, {'x': '2024-06-08 17:10:02', 'y': '16'}, {'x': '2024-06-08 17:20:03', 'y': '17'}, {'x': '2024-06-08 17:30:04', 'y': '18'}, {'x': '2024-06-08 17:40:04', 'y': '18'}, {'x': '2024-06-08 17:50:05', 'y': '16'}, {'x': '2024-06-08 18:00:06', 'y': '16'}, {'x': '2024-06-08 18:10:06', 'y': '17'}, {'x': '2024-06-08 18:20:07', 'y': '18'}, {'x': '2024-06-08 18:30:07', 'y': '19'}, {'x': '2024-06-08 18:40:08', 'y': '19'}, {'x': '2024-06-08 18:50:09', 'y': '18'}, {'x': '2024-06-08 19:00:09', 'y': '18'}, {'x': '2024-06-08 19:10:00', 'y': '21'}, {'x': '2024-06-08 19:20:01', 'y': '21'}, {'x': '2024-06-08 19:30:01', 'y': '20'}, {'x': '2024-06-08 19:40:02', 'y': '19'}, {'x': '2024-06-08 19:50:02', 'y': '21'}, {'x': '2024-06-08 20:00:03', 'y': '18'}, {'x': '2024-06-08 20:10:04', 'y': '18'}, {'x': '2024-06-08 20:20:04', 'y': '19'}, {'x': '2024-06-08 20:30:05', 'y': '21'}, {'x': '2024-06-08 20:40:06', 'y': '19'}, {'x': '2024-06-08 20:50:06', 'y': '17'}],
+        borderColor: 'rgb(172, 195, 142)',
+        backgroundColor: 'rgb(172, 195, 142, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
+        }, 
+      
+    
+      
+        {
+        
+        // network_net-sock::rawsck
+        
+          hidden: true,
+        
+        label: 'rawsck',
+        yAxisID: 'y',
+        data: [{'x': '2024-06-08 14:00:04', 'y': '0'}, {'x': '2024-06-08 14:10:04', 'y': '0'}, {'x': '2024-06-08 14:20:05', 'y': '0'}, {'x': '2024-06-08 14:30:06', 'y': '0'}, {'x': '2024-06-08 14:40:03', 'y': '0'}, {'x': '2024-06-08 14:50:07', 'y': '0'}, {'x': '2024-06-08 15:00:07', 'y': '0'}, {'x': '2024-06-08 15:10:08', 'y': '0'}, {'x': '2024-06-08 15:20:09', 'y': '0'}, {'x': '2024-06-08 15:30:09', 'y': '0'}, {'x': '2024-06-08 15:40:00', 'y': '0'}, {'x': '2024-06-08 15:50:00', 'y': '0'}, {'x': '2024-06-08 16:10:09', 'y': '0'}, {'x': '2024-06-08 16:20:09', 'y': '0'}, {'x': '2024-06-08 16:30:00', 'y': '0'}, {'x': '2024-06-08 16:40:01', 'y': '0'}, {'x': '2024-06-08 16:50:01', 'y': '0'}, {'x': '2024-06-08 17:00:02', 'y': '0'}, {'x': '2024-06-08 17:10:02', 'y': '0'}, {'x': '2024-06-08 17:20:03', 'y': '0'}, {'x': '2024-06-08 17:30:04', 'y': '0'}, {'x': '2024-06-08 17:40:04', 'y': '0'}, {'x': '2024-06-08 17:50:05', 'y': '0'}, {'x': '2024-06-08 18:00:06', 'y': '0'}, {'x': '2024-06-08 18:10:06', 'y': '0'}, {'x': '2024-06-08 18:20:07', 'y': '0'}, {'x': '2024-06-08 18:30:07', 'y': '0'}, {'x': '2024-06-08 18:40:08', 'y': '0'}, {'x': '2024-06-08 18:50:09', 'y': '0'}, {'x': '2024-06-08 19:00:09', 'y': '0'}, {'x': '2024-06-08 19:10:00', 'y': '0'}, {'x': '2024-06-08 19:20:01', 'y': '0'}, {'x': '2024-06-08 19:30:01', 'y': '0'}, {'x': '2024-06-08 19:40:02', 'y': '0'}, {'x': '2024-06-08 19:50:02', 'y': '0'}, {'x': '2024-06-08 20:00:03', 'y': '0'}, {'x': '2024-06-08 20:10:04', 'y': '0'}, {'x': '2024-06-08 20:20:04', 'y': '0'}, {'x': '2024-06-08 20:30:05', 'y': '0'}, {'x': '2024-06-08 20:40:06', 'y': '0'}, {'x': '2024-06-08 20:50:06', 'y': '0'}],
+        borderColor: 'rgb(95, 220, 199)',
+        backgroundColor: 'rgb(95, 220, 199, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
+        }, 
+      
+    
+      
+        {
+        
+        // network_net-sock::ip-frag
+        
+          hidden: true,
+        
+        label: 'ip-frag',
+        yAxisID: 'y',
+        data: [{'x': '2024-06-08 14:00:04', 'y': '0'}, {'x': '2024-06-08 14:10:04', 'y': '0'}, {'x': '2024-06-08 14:20:05', 'y': '0'}, {'x': '2024-06-08 14:30:06', 'y': '0'}, {'x': '2024-06-08 14:40:03', 'y': '0'}, {'x': '2024-06-08 14:50:07', 'y': '0'}, {'x': '2024-06-08 15:00:07', 'y': '0'}, {'x': '2024-06-08 15:10:08', 'y': '0'}, {'x': '2024-06-08 15:20:09', 'y': '0'}, {'x': '2024-06-08 15:30:09', 'y': '0'}, {'x': '2024-06-08 15:40:00', 'y': '0'}, {'x': '2024-06-08 15:50:00', 'y': '0'}, {'x': '2024-06-08 16:10:09', 'y': '0'}, {'x': '2024-06-08 16:20:09', 'y': '0'}, {'x': '2024-06-08 16:30:00', 'y': '0'}, {'x': '2024-06-08 16:40:01', 'y': '0'}, {'x': '2024-06-08 16:50:01', 'y': '0'}, {'x': '2024-06-08 17:00:02', 'y': '0'}, {'x': '2024-06-08 17:10:02', 'y': '0'}, {'x': '2024-06-08 17:20:03', 'y': '0'}, {'x': '2024-06-08 17:30:04', 'y': '0'}, {'x': '2024-06-08 17:40:04', 'y': '0'}, {'x': '2024-06-08 17:50:05', 'y': '0'}, {'x': '2024-06-08 18:00:06', 'y': '0'}, {'x': '2024-06-08 18:10:06', 'y': '0'}, {'x': '2024-06-08 18:20:07', 'y': '0'}, {'x': '2024-06-08 18:30:07', 'y': '0'}, {'x': '2024-06-08 18:40:08', 'y': '0'}, {'x': '2024-06-08 18:50:09', 'y': '0'}, {'x': '2024-06-08 19:00:09', 'y': '0'}, {'x': '2024-06-08 19:10:00', 'y': '0'}, {'x': '2024-06-08 19:20:01', 'y': '0'}, {'x': '2024-06-08 19:30:01', 'y': '0'}, {'x': '2024-06-08 19:40:02', 'y': '0'}, {'x': '2024-06-08 19:50:02', 'y': '0'}, {'x': '2024-06-08 20:00:03', 'y': '0'}, {'x': '2024-06-08 20:10:04', 'y': '0'}, {'x': '2024-06-08 20:20:04', 'y': '0'}, {'x': '2024-06-08 20:30:05', 'y': '0'}, {'x': '2024-06-08 20:40:06', 'y': '0'}, {'x': '2024-06-08 20:50:06', 'y': '0'}],
+        borderColor: 'rgb(40, 116, 56)',
+        backgroundColor: 'rgb(40, 116, 56, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
+        }, 
+      
+    
+      
+        {
+        
+        // network_net-sock::tcp-tw
+        
+          hidden: true,
+        
+        label: 'tcp-tw',
+        yAxisID: 'y',
+        data: [{'x': '2024-06-08 14:00:04', 'y': '2'}, {'x': '2024-06-08 14:10:04', 'y': '0'}, {'x': '2024-06-08 14:20:05', 'y': '0'}, {'x': '2024-06-08 14:30:06', 'y': '0'}, {'x': '2024-06-08 14:40:03', 'y': '0'}, {'x': '2024-06-08 14:50:07', 'y': '3'}, {'x': '2024-06-08 15:00:07', 'y': '0'}, {'x': '2024-06-08 15:10:08', 'y': '0'}, {'x': '2024-06-08 15:20:09', 'y': '2'}, {'x': '2024-06-08 15:30:09', 'y': '1'}, {'x': '2024-06-08 15:40:00', 'y': '1'}, {'x': '2024-06-08 15:50:00', 'y': '2'}, {'x': '2024-06-08 16:10:09', 'y': '2'}, {'x': '2024-06-08 16:20:09', 'y': '2'}, {'x': '2024-06-08 16:30:00', 'y': '1'}, {'x': '2024-06-08 16:40:01', 'y': '0'}, {'x': '2024-06-08 16:50:01', 'y': '16'}, {'x': '2024-06-08 17:00:02', 'y': '0'}, {'x': '2024-06-08 17:10:02', 'y': '1'}, {'x': '2024-06-08 17:20:03', 'y': '0'}, {'x': '2024-06-08 17:30:04', 'y': '0'}, {'x': '2024-06-08 17:40:04', 'y': '0'}, {'x': '2024-06-08 17:50:05', 'y': '0'}, {'x': '2024-06-08 18:00:06', 'y': '0'}, {'x': '2024-06-08 18:10:06', 'y': '0'}, {'x': '2024-06-08 18:20:07', 'y': '0'}, {'x': '2024-06-08 18:30:07', 'y': '0'}, {'x': '2024-06-08 18:40:08', 'y': '0'}, {'x': '2024-06-08 18:50:09', 'y': '0'}, {'x': '2024-06-08 19:00:09', 'y': '0'}, {'x': '2024-06-08 19:10:00', 'y': '1'}, {'x': '2024-06-08 19:20:01', 'y': '3'}, {'x': '2024-06-08 19:30:01', 'y': '2'}, {'x': '2024-06-08 19:40:02', 'y': '2'}, {'x': '2024-06-08 19:50:02', 'y': '0'}, {'x': '2024-06-08 20:00:03', 'y': '3'}, {'x': '2024-06-08 20:10:04', 'y': '2'}, {'x': '2024-06-08 20:20:04', 'y': '0'}, {'x': '2024-06-08 20:30:05', 'y': '0'}, {'x': '2024-06-08 20:40:06', 'y': '0'}, {'x': '2024-06-08 20:50:06', 'y': '0'}],
+        borderColor: 'rgb(91, 137, 87)',
+        backgroundColor: 'rgb(91, 137, 87, 0.3)',
+        borderWidth: 1,
+        pointRadius: 2,
+        fill: 'origin',
+        }
+      
+    
+    ]
+  }
+  
+}
+
+var ctx = document.getElementById('chartcanvas').getContext('2d');
+var myChart = new Chart(ctx);
+var mousex = 0;
+var mousey = 0;
+$(document).ready(function () {
+  showChart($('.i_inactive').first().text());
+  $('.i_inactive').first().attr("class", "i_active");
+
+  selhost="pablolaptop.pegaso.lan"
+  $('#hostlist').ulSelect(function(elem) {
+    if (selhost != $(elem).text()) {
+      selhost=$(elem).text().replace(/\s+/g, "");
+      window.location = selhost+"_cpu-load.html";
+    }
+  });
+  selchart="network_net-sock"
+  $('#chartlist').ulSelect(function(elem) {
+      selchart=$(elem).text().replace(/\s+/g, "");
+      window.location = selhost+"_"+selchart+".html"
+  });
+  // $("body").on("click",function(e) {
+  //   if (!$(e.target).closest('#eventdescription').length) {
+  //       $('#eventname').hide();
+  //       $('#eventdescription').hide();
+  //       $("#footer").css("border-color", "#000");
+  //       $("#footer").css("color", "#000");
+  //       $("#copyright").show();
+  //   }
+  // });
+  $(".extrametrics").find('input[type=checkbox]').change(function() {
+    id = $(this).attr('id').replace('metric', '');
+    if(this.checked) {
+      myChart.show(id);
+    } else {
+      myChart.hide(id);
+    }
+  });
+  $("#checkall").click(function() {
+    $(document.body).css('cursor', 'wait');
+    if(this.checked) {
+      $(".extrametrics").find('input[type=checkbox]').prop( "checked", true );
+    } else {
+      $(".extrametrics").find('input[type=checkbox]').prop( "checked", false );
+    }
+    $(".extrametrics").find('input[type=checkbox]').trigger('change');
+    $(document.body).css('cursor', 'default');
+  });
+
+});
+
+
+</script>
+
+</body>
+</html>

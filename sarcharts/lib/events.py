@@ -8,7 +8,7 @@ class Events:
     def getCSVdata(args, charts):
         if args.eventfile:
             with open(args.eventfile) as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=';')
+                csv_reader = csv.reader(csv_file, delimiter=',')
                 for row in csv_reader:
                     if not row[0].startswith("#"):
                         if row[1] not in charts.keys():
@@ -22,12 +22,11 @@ class Events:
                             if row[2] not in charts[row[1]]['events']:
                                 charts[row[1]]['events'][row[2]] = []
                             charts[row[1]]['events'][row[2]].append(
-                                   {'date': row[0],
+                                   {'date': util.valid_date(args, row[0]),
                                     'description': (
                                         row[3]
                                         .replace(r'"', r'\"')
                                         .replace(r'(', r'\(')
                                         .replace(r')', r'\)'))
                                     })
-
         return charts

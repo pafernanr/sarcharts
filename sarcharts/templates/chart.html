@@ -27,17 +27,34 @@
   {% endfor %}
     </ul>
   </div>
+  <div class="custom">
+    <input type="checkbox" checked id="checkall"> <b>Show/Hide all</b>
+    <div class="extrametrics">
+    {% for c in range((details['datasets'].values()|list)[0]|length) %}
+    {% set axis = (details['datasets'].values()|list)[0][c] %}
+    {% if "yAxisID" in axis.keys() %}
+      {% set fullname = chart+":"+axis.label|replace('extrametric_', '') %}
+      <!-- {{ fullname }} -->
+      {% if fullname | is_hidden_custom() %}
+      <label><input type="checkbox" id="metric{{c}}" style="accent-color: rgb({{ colors[c] }});"> {{ axis.label|replace('extrametric_', '') }}</label>
+      {% else %}
+      <label><input type="checkbox" checked id="metric{{c}}" style="accent-color: rgb({{ colors[c] }});"> {{ axis.label|replace('extrametric_', '') }}</label>
+      {% endif %}
+    {% endif %}
+    {% endfor %}
+    </div>
+  </div>
+  <div class="chart">
+    <canvas id="chartcanvas"></canvas>
+  </div>
+  <div class="footer">
+    <div id="eventname"></div>
+    <div id="eventdescription"></div>
+    <div id="copyright">
+      <a href="https://github.com/pafernanr/sarcharts">© sarcharts</a>
+    </div>
+  </div>
 </section>
-    <div class="chart">
-      <canvas id="chartcanvas"></canvas>
-    </div>
-    <div id="footer">
-      <div id="eventname"></div>
-      <div id="eventdescription"></div>
-      <div id="copyright">
-        <a href="https://github.com/pafernanr/sarcharts">© sarcharts</a>
-      </div>
-    </div>
 <script>
 $('.i_inactive').click(function() {
   $(".i_active").attr("class","i_inactive");
@@ -56,7 +73,7 @@ $('.i_inactive').click(function() {
       $("#eventdescription").html("{{ eventdata['description'] }}");
       $("#eventdescription").css("color", element.label.options.color);
       $("#eventname").show();
-      $("#eventname").html("{{ eventdata['date'] }} :: {{ event }}");
+      $("#eventname").html("{{ eventdata['date'] }} | {{ event }}");
       // $("#eventname").css("border-color", element.label.options.color);
       $("#eventname").css("color", element.label.options.color);
       return true;
@@ -68,7 +85,7 @@ $('.i_inactive').click(function() {
     // },
     borderColor: "rgba({{ colors[c] }}, 0.4)",
     borderWidth: 1,
-    display: (ctx) => ctx.chart.isDatasetVisible(1),
+    display: true,
     label: {
       display: true,
       position: 'start',
@@ -125,21 +142,38 @@ function showChart(name) {
             text: '{{ chart }}'
           }
         },
-        {% if "yAxisID" in (details['datasets'].values()|list)[0][0] %}
-        y1: {
+        {% for c in range((details['datasets'].values()|list)[0]|length) %}
+          {% set axis = (details['datasets'].values()|list)[0][c] %}
+          {% if "yAxisID" in axis.keys() %}
+        {{ axis['yAxisID'] }}: {
           title: {
             display: true,
-            text: 'Additional Metrics'
+            text: '{{ axis.label }}',
+            color: 'rgb({{ colors[c] }})',
           },
           type: 'linear',
-          display: true,
-          position: 'right'
-        }
-        {% endif %}
+          display: false,
+          position: 'right',
+          ticks: {
+            color: 'rgb({{ colors[c] }})',
+            backdropColor: 'rgb({{ colors[c] }})',
+            padding: 1,
+            backdropPadding: 1
+          },
+          grid: {
+            tickColor: 'rgb({{ colors[c] }}, 0.2)',
+            color: 'rgb({{ colors[c] }}, 0.2)'
+          }
+        },
+          {% endif %}
+        {% endfor %}
       },
       plugins: {
         legend: {
-          position: 'top'
+          position: 'top',
+          labels: {
+                    filter: item => item.text.indexOf('extrametric_') == -1
+          }
         },
         annotation: { annotations: { 
           {% for c in range(events|length) %}
@@ -176,7 +210,11 @@ var myCharts = {
     {% for i in range(data|length) %}
       {% if data[i]['values']|length > 0 %}
         {
-        {{ "hidden: true," if data[i]['label'] in details['hidden'] else "" }}
+        {% set fullname = chart+":"+item+":"+data[i]['label'] %}
+        // {{ fullname }}
+        {% if fullname | is_hidden_metric() %}
+          hidden: true,
+        {% endif %}
         label: '{{ data[i]['label'] }}',
         yAxisID: '{{ data[i]['yAxisID']|default('y') }}',
         data: {{ data[i]['values'] }},
@@ -213,16 +251,36 @@ $(document).ready(function () {
       selchart=$(elem).text().replace(/\s+/g, "");
       window.location = selhost+"_"+selchart+".html"
   });
-  $("body").on("click",function(e) {
-    if (!$(e.target).closest('#eventdescription').length) {
-        $('#eventname').hide();
-        $('#eventdescription').hide();
-        $("#footer").css("border-color", "#000");
-        $("#footer").css("color", "#000");
-        $("#copyright").show();
+  // $("body").on("click",function(e) {
+  //   if (!$(e.target).closest('#eventdescription').length) {
+  //       $('#eventname').hide();
+  //       $('#eventdescription').hide();
+  //       $("#footer").css("border-color", "#000");
+  //       $("#footer").css("color", "#000");
+  //       $("#copyright").show();
+  //   }
+  // });
+  $(".extrametrics").find('input[type=checkbox]').change(function() {
+    id = $(this).attr('id').replace('metric', '');
+    if(this.checked) {
+      myChart.show(id);
+    } else {
+      myChart.hide(id);
     }
   });
+  $("#checkall").click(function() {
+    $(document.body).css('cursor', 'wait');
+    if(this.checked) {
+      $(".extrametrics").find('input[type=checkbox]').prop( "checked", true );
+    } else {
+      $(".extrametrics").find('input[type=checkbox]').prop( "checked", false );
+    }
+    $(".extrametrics").find('input[type=checkbox]').trigger('change');
+    $(document.body).css('cursor', 'default');
+  });
+
 });
+
 
 </script>
 
