@@ -1,8 +1,11 @@
 import datetime
 import os
+import sys
 
 import argparse
+import configparser
 import fnmatch
+from pathlib import Path
 import shutil
 import webbrowser
 
@@ -16,6 +19,7 @@ from sarcharts.lib import util
 class SarCharts:
     args = ()
     cwd = os.getcwd()
+    default_cfg = f"{Path.home()}/.sarcharts.cfg"
 
     def valid_date(self, d):
         valid = util.valid_date_formats
@@ -26,6 +30,18 @@ class SarCharts:
                 pass
         raise argparse.ArgumentTypeError(
             f"not a valid date: {d!r}. Valid formats: {str(valid)}")
+
+    def valid_config_path(self, path):
+        if path == self.default_cfg and not os.path.exists(self.default_cfg):
+            currpath = os.path.dirname(os.path.realpath(__file__))
+            shutil.copyfile(
+                f"{currpath}/conf/sarcharts.cfg-dist",
+                self.default_cfg)
+            return path
+        if os.path.exists(path):
+            return path
+        else:
+            raise argparse.ArgumentTypeError(f"not a valid path: {path!r}")
 
     def valid_path(self, path):
         if os.path.exists(path):
@@ -44,6 +60,13 @@ class SarCharts:
         self.parser = argparse.ArgumentParser(
             description="SarCharts gets \"sysstat\" files from provided"
             + " `sarfilespaths` and generates dynamic HTML Charts."
+            )
+        self.parser.add_argument(
+            '-c',
+            '--configfile',
+            help='Use alternative config file. Default `~/.sarcharts.cfg`.',
+            default=self.default_cfg,
+            type=self.valid_config_path
             )
         self.parser.add_argument(
             '-d',
@@ -113,7 +136,14 @@ class SarCharts:
                         os.path.realpath(__file__)) + "/html",
                         self.args.outputpath + "/html")
 
+    def read_config(self):
+        self.config = configparser.ConfigParser()
+        self.config.read(self.args.configfile)
+
     def main(self):
+        self.read_config()
+        hidden_metrics = self.config.get('main', 'hidden_metrics').split("\n")
+        hidden_custom = self.config.get('main', 'hidden_custom').split("\n")
         if len(self.args.sarfilespaths) > 0:
             sarfiles = util.get_filelist(self.args.sarfilespaths)
             if len(sarfiles) > 0:
@@ -121,7 +151,8 @@ class SarCharts:
                 charts = Sadf().sar_to_chartjs(self.args, sarfiles)
                 charts = Events.getCSVdata(self.args, charts)
                 charts = Metrics.getCSVdata(self.args, charts)
-                ChartJS().write_files(self.args, charts)
+                ChartJS(hidden_metrics,
+                        hidden_custom).write_files(self.args, charts)
                 util.debug(self.args, '', "Open SarCharts in default browser.")
                 webbrowser.open(self.args.outputpath, 0, True)
             else:

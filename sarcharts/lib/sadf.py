@@ -213,7 +213,6 @@ class Sadf:
                                     "label": h,
                                     "values": []
                                     })
-
                         for f in range(len(fields[datastart:])):
                             charts[nodename]['activities'][activity]['datasets'][item][f]['values'].append({
                                     'x': fields[2],
