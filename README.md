@@ -39,5 +39,5 @@ optional arguments:
 
 | Example Chart |
 | --- |
-| ![](/doc/sarcharts.png) |
+| ![](/docs/sarcharts.png) |
 
