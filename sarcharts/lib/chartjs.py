@@ -30,7 +30,7 @@ class ChartJS:
 
     def is_hidden_metric(self, string):
         for r in self.hidden_metrics:
-            if r != "" and re.search(r, string):
+            if r != "" and re.search(f'^{r}$', string):
                 return True
 
     def is_hidden_custom(self, string):
