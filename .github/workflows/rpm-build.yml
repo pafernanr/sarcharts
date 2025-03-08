@@ -3,7 +3,7 @@ on:
   release:
     types: [published]
 env:
-  PKG_NAME: dynflowparser
+  PKG_NAME: sarcharts
   DIST: el7
   ARCH: noarch
 
