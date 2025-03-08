@@ -20,6 +20,17 @@ class SarCharts:
     cwd = os.getcwd()
     default_cfg = f"{Path.home()}/.sarcharts.cfg"
 
+    def valid_output_path(self, path):
+        if path[:1] == "/":
+            fullpath = path
+        else:
+            fullpath = f"{self.cwd}/{path}"
+        if os.path.exists(fullpath):
+            return fullpath
+        else:
+            raise argparse.ArgumentTypeError(
+                f"{fullpath!r} is not a valid path.")
+
     def valid_date(self, d):
         valid = util.valid_date_formats
         for v in valid:
@@ -56,6 +67,7 @@ class SarCharts:
         return files
 
     def __init__(self):
+        self.cwd = os.getcwd()
         self.parser = argparse.ArgumentParser(
             description="SarCharts gets \"sysstat\" files from provided"
             + " `sarfilespaths` and generates dynamic HTML Charts."
@@ -99,7 +111,8 @@ class SarCharts:
             '-o',
             '--outputpath',
             help='Path to put output files. Default `./sarcharts`.',
-            default='.'
+            default=self.cwd,
+            type=self.valid_output_path,
             )
         self.parser.add_argument(
             '-t',
@@ -153,7 +166,7 @@ class SarCharts:
                 ChartJS(hidden_metrics,
                         hidden_custom).write_files(self.args, charts)
                 util.debug(self.args, '', "Open SarCharts in default browser.")
-                webbrowser.open(self.args.outputpath, 0, True)
+                webbrowser.open(f"file:///{self.args.outputpath}")
             else:
                 self.parser.print_help()
                 util.debug(
