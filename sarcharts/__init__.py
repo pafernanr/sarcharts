@@ -166,7 +166,8 @@ class SarCharts:
                 ChartJS(hidden_metrics,
                         hidden_custom).write_files(self.args, charts)
                 util.debug(self.args, '', "Open SarCharts in default browser.")
-                webbrowser.open(f"file:///{self.args.outputpath}")
+                webbrowser.open(f"file:///{self.args.outputpath}/"
+                                + f"{list(charts.keys())[0]}_cpu-load.html")
             else:
                 self.parser.print_help()
                 util.debug(
