@@ -30,7 +30,6 @@ install -D -m 755 sarcharts/bin/__init__.py ${RPM_BUILD_ROOT}/usr/lib/tools/sarc
 cp -rp sarcharts ${RPM_BUILD_ROOT}/usr/lib/tools/
 
 rm -rf ${RPM_BUILD_ROOT}/usr/lib/tools/%{name}/lib/__pycache__
-rm -rf ${RPM_BUILD_ROOT}/usr/lib/tools/%{name}/html/images
 
 %post
 ln -s -f /usr/lib/tools/sarcharts/bin/__init__.py /usr/bin/sarcharts

@@ -101,6 +101,11 @@ class SarCharts:
             type=self.valid_date
             )
         self.parser.add_argument(
+            '-i',
+            '--include',
+            help='Include only especified metrics.',
+            )
+        self.parser.add_argument(
             '-m',
             '--metricfile',
             help='Add metrics csv file. Header: '
@@ -137,6 +142,8 @@ class SarCharts:
             )
         self.args = self.parser.parse_args()
 
+        if self.args.include:
+            self.args.include = self.args.include.split(",")
         # create required files on outputpath
         self.args.outputpath = self.args.outputpath + "/sarcharts"
         if os.path.exists(self.args.outputpath):

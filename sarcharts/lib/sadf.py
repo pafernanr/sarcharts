@@ -95,6 +95,8 @@ class Sadf:
                                 charts[nodename]['xlabels'].append(date)
                             linedet = f"{hdata['nodename']};{adata['interval']};{date}"
                         else:
+                            if args.include and act not in args.include:
+                                continue
                             if not util.in_date_range(args, date):
                                 continue
                             if isinstance(adata, list):
