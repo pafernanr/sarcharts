@@ -1,5 +1,6 @@
 import datetime
 import json
+import sys
 
 from sarcharts.lib.progressbar import ProgressBar
 from sarcharts.lib import util
@@ -51,6 +52,9 @@ class Sadf:
                         'hosts'][ihost]['statistics'])):
                     all_entries += len(data[idata]['sysstat']['hosts'][
                         ihost]['statistics'][istats].keys())
+        if all_entries == 0:
+            print("-- `sa` files don't contain statistics!!!!")
+            sys.exit(1)
         pb.all_entries = all_entries
 
         pb.start_time = datetime.datetime.now()
