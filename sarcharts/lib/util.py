@@ -70,6 +70,8 @@ def get_filelist(filepaths):
         # path is a file
         elif Path(path).is_file():
             files.append(str(path))
+    # sort files by date
+    files.sort(key=os.path.getmtime)
     return files
 
 
